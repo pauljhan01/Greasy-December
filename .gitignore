@@ -1102,3 +1102,7 @@ TeamProject/Scripts/pythonw.exe
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/misc.xml
 .idea/vcs.xml
+TeamProject/Scripts/__pycache__/Cipher.cpython-38.pyc
+TeamProject/Scripts/__pycache__/HardwareProcessor.cpython-38.pyc
+TeamProject/Scripts/__pycache__/ProjectManager.cpython-38.pyc
+TeamProject/Scripts/__pycache__/ProjectProcessor.cpython-38.pyc
