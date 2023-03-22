@@ -31,6 +31,43 @@ class Login extends React.Component {
     }
 }
 
+class Projects extends React.Component {
+
+    render(){
+
+        const components=[];
+
+        for(let i = 1; i < 3; i++){
+            components.push(<ProjectDocs text={`Project ${i}`} description={`Project ${i} description.`} id={`${i}`}/>);
+        }
+
+        return(
+          <div className={"Collection"}>
+              <h1>{this.props.text}</h1>
+              {components}
+          </div>
+        );
+    }
+}
+
+class ProjectDocs extends React.Component {
+
+    handleJoinProject = () => {
+        window.alert(`You have joined Project ${this.props.id}`);
+    }
+
+    render() {
+        return(
+            <div className={"doc"}>
+                <span><strong>{this.props.text}</strong></span>
+                <span>Project ID: {this.props.id}</span>
+                <span>Description: {this.props.description}</span>
+                <span><Button variant="contained" size={'small'} onClick={this.handleJoinProject}>Join</Button></span>
+            </div>
+        );
+    }
+}
+
 class Footer extends React.Component {
     render() {
         return (
@@ -46,6 +83,7 @@ function AwesomeApp(){
         <div className={"App"}>
             <Header />
             <Login />
+            <Projects text={'All Projects'}/>
             <Footer />
         </div>
     )
