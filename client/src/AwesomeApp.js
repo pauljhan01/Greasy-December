@@ -61,6 +61,22 @@ function Login() {
     );
 }
 
+class CreateProject extends  React.Component {
+
+    render() {
+         return(
+            <div className={"Collection"}>
+                <h1><strong>{this.props.text}</strong></h1>
+                <div className={"doc"}>
+                    <span><TextField id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+                    <span><TextField id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
+                    <span><Button variant="contained" size={'small'} onClick={this.handleJoinProject}>Create</Button></span>
+                </div>
+            </div>
+        );
+    }
+}
+
 class Projects extends React.Component {
 
     render(){
@@ -189,6 +205,7 @@ function AwesomeApp(){
         <div className={"App"}>
             <Header />
             <Login />
+            <CreateProject text={'Create a New Project'} />
             <Projects text={'All Projects'}/>
             <HWSets text={'Available Hardware Sets'}/>
             <Footer />
