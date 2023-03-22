@@ -4,6 +4,8 @@ import './App.css';
 import TextField from "@mui/material/TextField/TextField";
 import Button from "@mui/material/Button";
 
+import { useEffect, useState } from "react";
+
 class Header extends React.Component {
         render(){
         return (
@@ -18,17 +20,43 @@ class Header extends React.Component {
     }
 }
 
-class Login extends React.Component {
-    render() {
-        return (
-            <div className={"login"}>
-                <h1 className={"loginHeader"}>LOG IN</h1>
-                <span><TextField id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
-                <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
-                <span><Button variant="contained" size={'small'}>Log In</Button></span>
-            </div>
-        )
-    }
+function Login() {
+    const [clicked, setClicked] = useState(false);
+    const [textFieldValue, setTextFieldValue] = useState('');
+    const [responseData, setResponseData] = useState(null);
+
+    useEffect( () => {
+        function fetchData() {
+            return fetch(`/login/<${textFieldValue}>`)
+                .then(response => response.json())
+                .then(data => setResponseData(data))
+                .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
+                .catch(error => window.alert(error));
+        }
+
+        if(clicked) {
+            fetchData();
+            setClicked(false);
+            setTextFieldValue('');
+        }
+
+    }, [clicked, textFieldValue]);
+
+    return (
+        <div className={"login"}>
+            <h1 className={"loginHeader"}>LOG IN</h1>
+            <span><TextField value={textFieldValue} onChange={(e) => setTextFieldValue(e.target.value)} id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
+            <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
+            <span><Button onClick={() => setClicked(true)} variant="contained" size={'small'}>Log In</Button></span>
+
+            {responseData && (
+                <div>
+                    <p>Response data:</p>
+                    <pre>{JSON.stringify(responseData, null, 2)}</pre>
+                </div>
+            )}
+        </div>
+    );
 }
 
 class Projects extends React.Component {
