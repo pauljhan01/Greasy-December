@@ -1,6 +1,8 @@
 import React from "react";
 import logo from './logo.svg';
 import './App.css';
+import TextField from "@mui/material/TextField/TextField";
+import Button from "@mui/material/Button";
 
 class Header extends React.Component {
         render(){
@@ -13,6 +15,19 @@ class Header extends React.Component {
                 </div>
             </header>
         );
+    }
+}
+
+class Login extends React.Component {
+    render() {
+        return (
+            <div className={"login"}>
+                <h1 className={"loginHeader"}>LOG IN</h1>
+                <span><TextField id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
+                <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
+                <span><Button variant="contained" size={'small'}>Log In</Button></span>
+            </div>
+        )
     }
 }
 
@@ -30,6 +45,7 @@ function AwesomeApp(){
     return (
         <div className={"App"}>
             <Header />
+            <Login />
             <Footer />
         </div>
     )
