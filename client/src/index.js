@@ -1,18 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import App1 from './App';
-import App2 from './App2'
-import App3 from './App3'
+// import App from './App';
+// import App1 from './App';
+// import App2 from './App2'
+// import App3 from './App3'
+import AwesomeApp from "./AwesomeApp";
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App1 />
-    <App2 />
-    <App3 />
+      <AwesomeApp />
+    {/*<App1 />*/}
+    {/*<App2 />*/}
+    {/*<App3 />*/}
   </React.StrictMode>
 );
 
