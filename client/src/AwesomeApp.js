@@ -48,6 +48,8 @@ function Login() {
             <span><TextField value={textFieldValue} onChange={(e) => setTextFieldValue(e.target.value)} id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
             <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
             <span><Button onClick={() => setClicked(true)} variant="contained" size={'small'}>Log In</Button></span>
+            <span>or</span>
+            <span><Button onClick={() => setClicked(true)} variant="contained" size={'small'}>Create Account</Button></span>
 
             {responseData && (
                 <div>
