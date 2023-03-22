@@ -155,7 +155,7 @@ function AwesomeApp(){
             <Header />
             <Login />
             <Projects text={'All Projects'}/>
-            <HWSets text={'Hardware Sets'}/>
+            <HWSets text={'Available Hardware Sets'}/>
             <Footer />
         </div>
     )
