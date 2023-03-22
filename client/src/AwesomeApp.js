@@ -16,10 +16,21 @@ class Header extends React.Component {
     }
 }
 
+class Footer extends React.Component {
+    render() {
+        return (
+            <footer className="footer">
+                <p>&copy; 2023 GreasyDecember, Inc. - All Rights Reserved.</p>
+            </footer>
+        )
+    }
+}
+
 function AwesomeApp(){
     return (
         <div className={"App"}>
             <Header />
+            <Footer />
         </div>
     )
 }
