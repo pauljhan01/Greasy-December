@@ -63,14 +63,29 @@ function Login() {
 
 class CreateProject extends  React.Component {
 
+    state = { name: '', description: ''};
+
+    handleProjectName = (event) => {
+        this.setState( { name: event.target.value })
+    };
+
+    handleProjectDescription = (event) => {
+        this.setState({description: event.target.value})
+    };
+
+    handleCreateProject = () => {
+        window.alert(`You have created Project: ${this.state.name} with Description: ${this.state.description}`)
+        this.setState({name:'', description: ''})
+    };
+
     render() {
          return(
             <div className={"Collection"}>
                 <h1><strong>{this.props.text}</strong></h1>
                 <div className={"doc"}>
-                    <span><TextField id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
-                    <span><TextField id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
-                    <span><Button variant="contained" size={'small'} onClick={this.handleJoinProject}>Create</Button></span>
+                    <span><TextField value={this.state.name} onChange={this.handleProjectName} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+                    <span><TextField value={this.state.description} onChange={this.handleProjectDescription} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
+                    <span><Button variant="contained" size={'small'} onClick={this.handleCreateProject}>Create</Button></span>
                 </div>
             </div>
         );
