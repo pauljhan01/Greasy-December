@@ -122,18 +122,51 @@ class HWSets extends React.Component {
 
 class HWDocs extends React.Component {
 
+    state = { qty: '', project: '', available: 200, capacity: 200 };
+
+    handleInputText = (event) => this.setState( { qty: event.target.value });
+
+    handleProjectInput = (event) => this.setState({ project: event.target.value })
+
+    handleCheckOut = () => {
+        const newAmt = this.state.available - parseInt(this.state.qty, 10);
+        const checkedOutAmt = parseInt(this.state.qty, 10);
+
+        if(parseInt(this.state.qty, 10) > this.state.available) {
+            this.setState({ qty: '', project:'', available: 0});
+            window.alert(`You are attempting to check out too many units! ${this.state.available} units from ${this.props.text} were checked out for ${this.state.project}!`);
+        }
+        else {
+            this.setState({ qty: '', project:'', available: newAmt });
+            window.alert(`You have checked out ${checkedOutAmt} units from ${this.props.text} for Project ${this.state.project}.`);
+        }
+    };
+
+    handleCheckIn = () => {
+
+        const newAmt = this.state.available + parseInt(this.state.qty, 10);
+        if(newAmt > this.state.capacity) {
+            this.setState({ qty: '', project: '',available: this.state.capacity });
+            window.alert(`You are attempting to check in too many units! ${newAmt - this.state.capacity} units from ${this.props.text} where NOT checked in for Project ${this.state.project}!`);
+        }
+        else {
+            this.setState({ qty: '', project: '', available: newAmt });
+            window.alert(`You have checked in ${newAmt} units from ${this.props.text} for Project ${this.state.project}!`);
+        }
+    };
+
     render() {
         return(
             <div className={"doc"}>
                 <span><strong>{this.props.text}</strong></span>
 
-                <span><strong>Availability:</strong></span>
-                <span><strong>Capacity:</strong></span>
+                <span><strong>Availability:</strong> {this.state.available}</span>
+                <span><strong>Capacity:</strong> {this.state.capacity}</span>
 
-                <span><TextField id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                <span><TextField id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
-                 <span><Button variant="contained" size={'small'}>Check In</Button></span>
-                <span><Button variant="contained" size={'small'}>Check Out</Button></span>
+                <span><TextField value={this.state.qty} onChange={this.handleInputText} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                <span><TextField value={this.state.project} onChange={this.handleProjectInput} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
+                 <span><Button variant="contained" size={'small'} onClick={this.handleCheckIn}>Check In</Button></span>
+                <span><Button variant="contained" size={'small'} onClick={this.handleCheckOut}>Check Out</Button></span>
             </div>
         )
     }
