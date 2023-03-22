@@ -84,6 +84,10 @@ class ProjectDocs extends React.Component {
         window.alert(`You have joined Project ${this.props.id}`);
     }
 
+    handleLeaveProject = () => {
+        window.alert(`You have left Project ${this.props.id}`);
+    }
+
     render() {
         return(
             <div className={"doc"}>
@@ -91,6 +95,7 @@ class ProjectDocs extends React.Component {
                 <span>Project ID: {this.props.id}</span>
                 <span>Description: {this.props.description}</span>
                 <span><Button variant="contained" size={'small'} onClick={this.handleJoinProject}>Join</Button></span>
+                <span><Button variant="contained" size={'small'} onClick={this.handleLeaveProject}>Leave</Button></span>
             </div>
         );
     }
