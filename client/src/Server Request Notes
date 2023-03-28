@@ -13,3 +13,7 @@ Requests -> HWSets returns all HWset data
 
 
 Keep track of an active project
+
+Techincal Debt
+- Login does not handle success
+- Login does not handle fail

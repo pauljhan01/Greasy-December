@@ -92,37 +92,83 @@ function Login() {
     );
 }
 
+function CreateProject() {
 
-class CreateProject extends  React.Component {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [createProject, setCreateProject] = useState(false);
+    const [responseData, setResponseData] = useState(null);
 
-    state = { name: '', description: ''};
+    let message;
 
-    handleProjectName = (event) => {
-        this.setState( { name: event.target.value })
-    };
+    useEffect( () => {
 
-    handleProjectDescription = (event) => {
-        this.setState({description: event.target.value})
-    };
+        function fetchData() {
+            return fetch(`/createProject/<${name}>*<${description}>`)
+                .then(response => response.json())
+                .then(data => setResponseData(data))
+                .catch(error => window.alert(error));
+        }
 
-    handleCreateProject = () => {
-        window.alert(`You have created Project: ${this.state.name} with Description: ${this.state.description}`)
-        this.setState({name:'', description: ''})
-    };
+        if(createProject){
+            message = fetchData();
+            setCreateProject(false);
+            setName('');
+            setDescription('');
+            // window.alert(`You have created Project: ${name} with Description: ${description}`)
+        }
+    }, [createProject]);
 
-    render() {
-         return(
-            <div className={"Collection"}>
-                <h1><strong>{this.props.text}</strong></h1>
-                <div className={"doc"}>
-                    <span><TextField value={this.state.name} onChange={this.handleProjectName} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
-                    <span><TextField value={this.state.description} onChange={this.handleProjectDescription} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
-                    <span><Button variant="contained" size={'small'} onClick={this.handleCreateProject}>Create</Button></span>
-                </div>
+    return(
+        <div className={"Collection"}>
+            <h1><strong>Create Project</strong></h1>
+            <div className={"doc"}>
+                <span><TextField value={name} onChange={(e) => setName(e.target.value)} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+                <span><TextField value={description} onChange={(e) => setDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
+                <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
+               {responseData && (
+                    <div>
+                        <p>Response:</p>
+                        <pre>{JSON.stringify(responseData, null, 2)}</pre>
+                    </div>
+                )}
             </div>
-        );
-    }
+
+        </div>
+    );
+
 }
+
+// class CreateProject extends  React.Component {
+//
+//     state = { name: '', description: ''};
+//
+//     handleProjectName = (event) => {
+//         this.setState( { name: event.target.value })
+//     };
+//
+//     handleProjectDescription = (event) => {
+//         this.setState({description: event.target.value})
+//     };
+//
+//     handleCreateProject = () => {
+//         window.alert(`You have created Project: ${this.state.name} with Description: ${this.state.description}`)
+//         this.setState({name:'', description: ''})
+//     };
+//
+//     render() {
+//          return(
+//             <div className={"Collection"}>
+//                 <h1><strong>{this.props.text}</strong></h1>
+//                 <div className={"doc"}>
+//                     <span><TextField value={this.state.name} onChange={this.handleProjectName} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+//                     <span><TextField value={this.state.description} onChange={this.handleProjectDescription} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
+//                     <span><Button variant="contained" size={'small'} onClick={this.handleCreateProject}>Create</Button></span>
+//                 </div>
+//             </div>
+//         );
+//     }
+// }
 
 class ProjectLookup extends  React.Component {
 
@@ -150,23 +196,24 @@ class ProjectLookup extends  React.Component {
     }
 }
 
-class Projects extends React.Component {
+function Projects () {
+    const components = [];
 
-    render(){
-
-        const components=[];
-
-        for(let i = 1; i < 3; i++){
-            components.push(<ProjectDocs text={`Project ${i}`} description={`Project ${i} description.`} id={`${i}`}/>);
-        }
-
-        return(
-          <div className={"Collection"}>
-              <h1>{this.props.text}</h1>
-              {components}
-          </div>
-        );
+    for (let i = 1; i < 4; i++) {
+        // components.push(Docs(`Project ${i}`));
     }
+
+    return (
+        <projects>
+            <div className={"collection"}>
+                <div>
+                    <h1>Projects</h1>
+                    {/*<div>{Docs()}</div>*/}
+                    {components}
+                </div>
+            </div>
+        </projects>
+    );
 }
 
 class ProjectDocs extends React.Component {
@@ -240,10 +287,11 @@ function AwesomeApp(){
         <div className={"App"}>
             <Header />
             <Login />
-            <CreateProject text={'Create a New Project'} />
+            <CreateProject />
             <ProjectLookup text={'Join a Project'}/>
-            {/*<Projects text={'All Projects'}/>*/}
-            <HWSets text={'Available Hardware Sets'}/>
+            
+            <Projects text={'Your Projects'}/>
+            {/*<HWSets text={'Available Hardware Sets'}/>*/}
             <Footer />
         </div>
     )

@@ -20,6 +20,16 @@ def login(fields):
     # return string
     return jsonify(string)
 
+#Temporary Create Project
+@app.route('/createProject/<string:name>*<string:description>')
+def create_project(name, description):
+    return jsonify('success')
+
+
+@app.route('/joinProject/<int:id>')
+def join_project(id):
+    return jsonify('success')
+
 #Gets List of all Projects in the database
 @app.route('/projects')
 def projects():
