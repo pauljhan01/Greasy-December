@@ -127,9 +127,10 @@ def createProject(projectName, projectDescription):
     client.close()
     return jsonify('Success')
 
-# createProject(projectName, projectDescription): Creates New project document in Projects_db
+# createProjectWithID(projectName, projectDescription, projectID): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
 #           <projectDescription> -> String: Description of project
+#           <projectID> -> String: Project ID
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/projects/createProject/<projectName>/<projectDescription>/<projectID>')
 def createProjectWithID(projectName, projectDescription, projectID):
