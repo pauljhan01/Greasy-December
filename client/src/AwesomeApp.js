@@ -120,9 +120,10 @@ function CreateProject() {
     }, [createProject]);
 
     return(
-        <div className={"Collection"}>
-            <h1><strong>Create Project</strong></h1>
-            <div className={"doc"}>
+        <div className={"collection"}>
+
+            <div className={"login"}>
+                <h1><strong>Create Project</strong></h1>
                 <span><TextField value={name} onChange={(e) => setName(e.target.value)} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
                 <span><TextField value={description} onChange={(e) => setDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
                 <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
@@ -143,7 +144,7 @@ function JoinProject() {
 
     const [btnClick, setBtnClick] = useState(false);
     const [responseData, setResponseData] = useState(null);
-    const [id, setId] = useState(0);
+    const [id, setId] = useState(null);
 
     let message;
 
@@ -165,9 +166,10 @@ function JoinProject() {
     },[btnClick]);
 
     return(
-        <div className={"Collection"}>
-            <h1><strong>Join Project</strong></h1>
-            <div className={"doc"}>
+        <div className={"collection"}>
+
+            <div className={"login"}>
+                <h1><strong>Join Project</strong></h1>
                 <span><TextField value={id} onChange={(e) => setId(parseInt(e.target.value))} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
                 <span><Button variant="contained" size={'small'} onClick={() => setBtnClick(true)}>Join</Button></span>
             </div>
@@ -182,18 +184,160 @@ function JoinProject() {
 
 }
 
+function Docs(name) {
+
+    const [joined, setJoined] = useState(false);
+    const [notInProject, setNotInProject] = useState(true);
+    const [btnText, setBtnText] = useState('Join');
+
+    const [avail1, setAvail1] = useState(200);
+    const [avail2, setAvail2] = useState(200);
+
+    const [cap1, setCap1] = useState(200);
+    const [cap2, setCap2] = useState(200);
+
+    const [qty1, setQty1] = useState(0);
+    const [qty2, setQty2] = useState(0);
+
+    const [checkin1, setCheckin1] = useState(false);
+    const [checkin2, setCheckin2] = useState(false);
+
+    const [checkout1, setCheckout1] = useState(false);
+    const [checkout2, setCheckout2] = useState(false);
+
+    const [responseData, setResponseData] = useState(null);
+
+    useEffect( () => {
+
+        function checkIn(name, qty){
+            return fetch(`/checkin/${name}*${qty}`)
+                .then(response => response.text())
+                .then(data => {
+                    setResponseData(data);
+                    window.alert(`${data}`);
+
+                })
+               .catch(error => {
+                   // Handle any errors that occurred during the fetch or JSON conversio
+                   console.error(error);
+                });
+        }
+        function checkOut(name, qty){
+            return fetch(`/checkout/${name}*${qty}`)
+                .then(response => response.text())
+                .then(data => {
+                    setResponseData(data);
+                    window.alert(`${data}`);
+
+                })
+               .catch(error => {
+                   // Handle any errors that occurred during the fetch or JSON conversio
+                   console.error(error);
+                });
+        }
+
+        function joinProject(name){
+            return fetch(`/join/${name}`)
+                .then(response => response.text())
+                .then(data => {
+                    setResponseData(data);
+                    window.alert(`${data}`);
+
+                })
+               .catch(error => {
+                   // Handle any errors that occurred during the fetch or JSON conversio
+                   console.error(error);
+                });
+        }
+
+        function leaveProject(name){
+            return fetch(`/leave/${name}`)
+                .then(response => response.text())
+                .then(data => {
+                    setResponseData(data);
+                    window.alert(`${data}`);
+
+                })
+               .catch(error => {
+                   // Handle any errors that occurred during the fetch or JSON conversio
+                   console.error(error);
+                });
+        }
+
+        if(checkin1){
+            setCheckin1(false);
+            checkIn(name,qty1);
+        }
+        if(checkout1){
+            setCheckout1(false);
+            checkOut(name,qty1);
+        }
+        if(checkin2){
+            setCheckin2(false);
+            checkIn(name,qty2);
+        }
+        if(checkout2){
+            setCheckout2(false);
+            checkOut(name,qty2);
+        }
+        if(joined){
+            if(notInProject){
+                setNotInProject(false);
+                joinProject(name);
+                setBtnText('Leave');
+            }
+            else {
+                setNotInProject(true);
+                leaveProject(name);
+                setBtnText('Join');
+            }
+
+            setJoined(false);
+        }
+
+    }, [name, checkin1, checkout1, checkin2, checkout2, joined, notInProject]);
+
+    return (
+         <div className={"doc"}>
+             <h2><strong>{name}</strong></h2>
+
+             <div className={"spacearound"}>
+
+                 user1, user2, user3
+                 <span><Button onClick={() => setJoined(true)} variant="contained" size={'small'}>{btnText}</Button></span>
+             </div>
+
+            <span className={"hardwareSet"}>
+                <span><strong>HWSet1</strong> </span>
+                <span><strong>Availability: </strong> {avail1} / {cap1} </span>
+                <span><TextField value={qty1} onChange={(e) => setQty1(e.target.value)} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
+                <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
+            </span>
+             <span className={"hardwareSet"}>
+                <span><strong>HWSet2</strong> </span>
+                <span><strong>Availability: </strong> {avail2} / {cap2} </span>
+                <span><TextField value={qty2} onChange={(e) => setQty2(e.target.value)} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
+                <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
+            </span>
+         </div>
+    );
+
+}
+
 function Projects () {
     const components = [];
 
     for (let i = 1; i < 4; i++) {
-        // components.push(Docs(`Project ${i}`));
+        components.push(Docs(`Project ${i}`));
     }
 
     return (
         <projects>
             <div className={"collection"}>
                 <div>
-                    <h1>Projects</h1>
+                    <h1>Your Projects</h1>
                     {/*<div>{Docs()}</div>*/}
                     {components}
                 </div>
@@ -275,7 +419,7 @@ function AwesomeApp(){
             <Login />
             <CreateProject />
             <JoinProject />
-
+            <Projects />
             {/*<Projects text={'Your Projects'}/>*/}
             {/*<HWSets text={'Available Hardware Sets'}/>*/}
             <Footer />
