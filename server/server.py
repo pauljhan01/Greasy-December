@@ -113,12 +113,48 @@ def createProject(projectName, projectDescription):
         return jsonify('Fail')
 
     Project_ID = random.randint(minID, maxID)
-    while Projects_collection.find_one({"ID": int(Project_ID)}) != None:
+    while Projects_collection.find_one({"ID": Project_ID}) != None:
         Project_ID = random.randint(minID, maxID)
 
     Projects_collection.insert_one({
         "Name": projectName,
-        "ID": Project_ID,
+        "ID": str(Project_ID),
+        "Description": projectDescription,
+        "CheckedOut": {}
+    })
+
+
+    client.close()
+    return jsonify('Success')
+
+# createProject(projectName, projectDescription): Creates New project document in Projects_db
+#   Inputs: <projectName> -> String: name of project
+#           <projectDescription> -> String: Description of project
+#   Outputs: String -> 'Success" or 'Fail'
+@app.route('/projects/createProject/<projectName>/<projectDescription>/<projectID>')
+def createProjectWithID(projectName, projectDescription, projectID):
+    client = pymongo.MongoClient(clientString)
+
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    #check if out of ID's
+    projectIterator = Projects_collection.find()
+    projectCount = 0
+    for docs in projectIterator:
+        projectCount += 1
+
+    #check if project already exists
+    Project_Document = Projects_collection.find_one({"Name": str(projectName)})
+    if Project_Document != None:
+        return jsonify('Fail')
+
+    Project_Document = Projects_collection.find_one({"ID": str(projectID)})
+    if Project_Document != None:
+        return jsonify('Fail')
+
+    Projects_collection.insert_one({
+        "Name": projectName,
+        "ID": projectID,
         "Description": projectDescription,
         "CheckedOut": {}
     })
@@ -138,7 +174,7 @@ def projects_getByID(projectID):
 
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(projectID)})
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
 
     if Projects_Document == None:
         client.close()
@@ -197,7 +233,7 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
     # get project
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(IDProject)})
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
 
     if Projects_Document == None:
         client.close()
@@ -227,7 +263,7 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
         else:
             Projects_checkedOut[IDHWSet] -= quantity
 
-        Projects_collection.update_one({"ID": int(IDProject)},
+        Projects_collection.update_one({"ID": IDProject},
                                  {"$set": { "CheckedOut": Projects_checkedOut}})
         #then they can check in
         #update checkedout map for IDHWSet
@@ -254,7 +290,7 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
     # get project
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(IDProject)})
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
 
     if Projects_Document == None:
         client.close()
@@ -282,7 +318,7 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
         else:
             Projects_checkedOut[IDHWSet] += quantity
 
-        Projects_collection.update_one({"ID": int(IDProject)},
+        Projects_collection.update_one({"ID": IDProject},
                                  {"$set": { "CheckedOut": Projects_checkedOut}})
 
         # then they can check out
