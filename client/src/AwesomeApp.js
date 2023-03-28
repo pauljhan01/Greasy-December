@@ -143,14 +143,14 @@ function JoinProject() {
 
     const [btnClick, setBtnClick] = useState(false);
     const [responseData, setResponseData] = useState(null);
-    const [id, setId] = useState(null);
+    const [id, setId] = useState(0);
 
     let message;
 
     useEffect( () => {
 
             function fetchData() {
-                return fetch(`/joinProject/<${id}>`)
+                return fetch(`/joinProject/${id}`)
                     .then(response => response.json())
                     .then(data => setResponseData(data))
                     .catch(error => window.alert(error));
@@ -168,9 +168,15 @@ function JoinProject() {
         <div className={"Collection"}>
             <h1><strong>Join Project</strong></h1>
             <div className={"doc"}>
-                <span><TextField value={id} onChange={(e) => setId(e.target.value)} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+                <span><TextField value={id} onChange={(e) => setId(parseInt(e.target.value))} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
                 <span><Button variant="contained" size={'small'} onClick={() => setBtnClick(true)}>Join</Button></span>
             </div>
+            {responseData && (
+                <div>
+                    <p>Response data:</p>
+                    <pre>{JSON.stringify(responseData, null, 2)}</pre>
+                </div>
+            )}
         </div>
     );
 
