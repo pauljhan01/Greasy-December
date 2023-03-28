@@ -13,12 +13,13 @@ def index():
 
 @app.route('/login/<fields>')
 def login(fields):
-    encrypted = hashlib.sha256(fields.encode())
+    # encrypted = hashlib.sha256(fields.encode())
     # return json.dumps("this is from the server")
-    string = "welcome %s" % encrypted.hexdigest()
-    print(string)
+    # string = "welcome %s" % encrypted.hexdigest()
+    # print(string)
     # return string
-    return jsonify(string)
+    message = 'success'
+    return jsonify(message)
 
 #Gets List of all Projects in the database
 @app.route('/projects')
