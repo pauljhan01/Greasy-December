@@ -65,14 +65,7 @@ function Login() {
 
     return (
         <div className={"login"}>
-<<<<<<< Updated upstream
-            <h1 className={"loginHeader"}>LOG IN</h1>
-            <span><TextField value={textFieldValue} onChange={(e) => setTextFieldValue(e.target.value)} id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
-            <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
-            <span><Button onClick={() => setClicked(true)} variant="contained" size={'small'}>Log In</Button></span>
-=======
             <h1 className={"loginHeader"}>{loginLabel}</h1>
->>>>>>> Stashed changes
 
             { loginStatus ? (
                 <div>
@@ -99,8 +92,7 @@ function Login() {
     );
 }
 
-<<<<<<< Updated upstream
-=======
+
 class CreateProject extends  React.Component {
 
     state = { name: '', description: ''};
@@ -158,7 +150,6 @@ class ProjectLookup extends  React.Component {
     }
 }
 
->>>>>>> Stashed changes
 class Projects extends React.Component {
 
     render(){
@@ -249,15 +240,10 @@ function AwesomeApp(){
         <div className={"App"}>
             <Header />
             <Login />
-<<<<<<< Updated upstream
-            <Projects text={'All Projects'}/>
-            <HWSets text={'Hardware Sets'}/>
-=======
             <CreateProject text={'Create a New Project'} />
             <ProjectLookup text={'Join a Project'}/>
             {/*<Projects text={'All Projects'}/>*/}
             <HWSets text={'Available Hardware Sets'}/>
->>>>>>> Stashed changes
             <Footer />
         </div>
     )
