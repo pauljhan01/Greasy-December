@@ -17,3 +17,8 @@ Keep track of an active project
 Techincal Debt
 - Login does not handle success
 - Login does not handle fail
+
+
+//TODO
+- Add project id to projects list
+- update so Leave removes from the list on the backend

@@ -14,32 +14,54 @@ def index():
     return 'Index Page'
 
 
-@app.route('/login/<fields>')
-def login(fields):
-    encrypted = hashlib.sha256(fields.encode())
-    # return json.dumps("this is from the server")
-    string = "welcome %s" % encrypted.hexdigest()
-    print(string)
-    # return string
-    return jsonify(string)
-
-
-# Temporary Create Project
-@app.route('/createProject/<string:name>*<string:description>')
-def create_project(name, description):
+@app.route('/login/<string:username>/<string:password>')
+def login(username, password):
     return jsonify('success')
 
 
-# Gets List of all Projects in the database
-@app.route('/projects')
-def projects():
-    # TODO
-    return {"projects": ["Project1", "Project2", "Project3"], "test": ["test1", "test2", "test3"]}  # for testing
+class project:
+    def __init__(self):
+        self.id = ''
+        self.name = ''
+        self.description = ''
 
+
+projectList = []
+
+class ProjectEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, project):
+            return {
+                'name': obj.name,
+                'description': obj.description,
+                # add any other fields you want to serialize here
+            }
+        return super().default(obj)
+
+# Temporary Create Project
+@app.route('/createProject/<string:name>/<string:description>')
+def create_project(name, description):
+    newProject = project()
+    newProject.name = name
+    newProject.description = description
+    projectList.append(newProject)
+    json_response = json.dumps(projectList, cls=ProjectEncoder)
+    return json_response, 200, {'Content-Type': 'application/json'}
+
+
+
+
+# Gets List of all Projects in the database
+@app.route('/projects/<string:username>')
+def projects(username):
+    json_response = json.dumps(projectList, cls=ProjectEncoder)
+    return json_response, 200, {'Content-Type': 'application/json'}
 
 # Temporary join project
-@app.route('/joinProject/<int:id>')
-def join_project(id):
+# @app.route('/joinProject/<int:id>*<string:username>')
+@app.route('/joinProject/<string:id>/<string:username>')
+# def join_project(id, username):
+def join_project(id, username):
     return jsonify('success')
 
 

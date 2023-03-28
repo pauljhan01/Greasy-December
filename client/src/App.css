@@ -125,9 +125,14 @@ input {
   margin-bottom: 15px;
 }
 
+.docHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
 .hardwareSet {
-  display: inline-flex;
-  justify-content: space-around;
+  display: flex;
+  justify-content: space-between;
   gap: 15px;
 
 }
