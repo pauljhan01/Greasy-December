@@ -55,19 +55,18 @@ def login(userName, password):
 
     client.close()
     if Users_Document == None:
-        return jsonify('False')
+        return jsonify('Fail')
     if userName == Users_Document.get("userID") and encryptedInputPassword.hexdigest() == databasePassword:
-        return jsonify('True')
+        return jsonify('Success')
     else:
-        return jsonify('False')
+        return jsonify('Fail')
 
 
 #------ Projects_db functions --------------------------------------------------------------------------------------------------------
 
 #projects(): Gets Dictionary of all Projects in the database
 #   Inputs: None
-#   Outputs: Dictionary(Map) -> Key: Project ID, Value: [name, Description, ]
-#TODO: adjust to generate ID as a number
+#   Outputs: Dictionary(Map) -> Key: Project ID, Value: [name, Description, CheckedOut]
 @app.route('/projects')
 def projects():
     client = pymongo.MongoClient(clientString)
@@ -87,11 +86,10 @@ def projects():
     client.close()
     return Projects_dict
 
-#createProject(fields): Creates New project docuemnt in Projects_db
+# createProject(projectName, projectDescription): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
 #           <projectDescription> -> String: Description of project
 #   Outputs: String -> 'Success" or 'Fail'
-#TODO: adjust to generate ID as a number
 @app.route('/projects/createProject/<projectName>/<projectDescription>')
 def createProject(projectName, projectDescription):
     minID = 1000
@@ -107,7 +105,7 @@ def createProject(projectName, projectDescription):
         projectCount += 1
 
     if projectCount >= maxID - minID + 1:
-        return 'full'
+        return jsonify('Fail')
 
     #check if project already exists
     Project_Document = Projects_collection.find_one({"Name": str(projectName)})
@@ -129,21 +127,38 @@ def createProject(projectName, projectDescription):
     client.close()
     return jsonify('Success')
 
+#projects_getByID(projectID): Get one project by ID
+#   Inputs: <projectName> -> String: name of project
+#   Output: Dictionary(Map) -> Key: HWSet ID, Value: [Capacity, Availability]
+#               Note: the dictionary will be one entry long
+#           String: "Fail" if no HWSet is found
 @app.route('/projects/getByID/<projectID>')
 def projects_getByID(projectID):
     client = pymongo.MongoClient(clientString)
 
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": projectID})
+    Projects_Document = Projects_collection.find_one({"ID": int(projectID)})
 
-    client.close()
     if Projects_Document == None:
+        client.close()
         return jsonify('Fail')
 
-    return jsonify('Success')
+    Project_dict = {}
+    temp_ID = Projects_Document.get('ID')
+    temp_Name = Projects_Document.get('Name')
+    temp_Description = Projects_Document.get('Description')
+    temp_CheckedOut = Projects_Document.get('CheckedOut')
+    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
 
+    client.close()
+    return Project_dict
 
+# HWSets_getOne(): Get information about one hardware set
+#   Input: <IDHWSet> -> String: ID of Hardware set
+#   Output: Dictionary(Map) -> Key: HWSet ID, Value: [Capacity, Availability]
+#               Note: the dictionary will be one entry long
+#           String: "Fail" if no HWSet is found
 @app.route('/projects/getByName/<projectName>')
 def projects_getByName(projectName):
     client = pymongo.MongoClient(clientString)
@@ -152,15 +167,23 @@ def projects_getByName(projectName):
     Projects_collection = Projects_db.get_collection("Projects_collection")
     Projects_Document = Projects_collection.find_one({"Name": projectName})
 
-    client.close()
     if Projects_Document == None:
+        client.close()
         return jsonify('Fail')
 
-    return jsonify('Success')
+    Project_dict = {}
+    temp_ID = Projects_Document.get('ID')
+    temp_Name = Projects_Document.get('Name')
+    temp_Description = Projects_Document.get('Description')
+    temp_CheckedOut = Projects_Document.get('CheckedOut')
+    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
+
+    client.close()
+    return Project_dict
 
 #------ HW_db functions --------------------------------------------------------------------------------------------------------
 
-#checkIn(): checks in HW back into its HWSet
+# checkIn(): checks in HW back into its HWSet
 #   Input: <IDHWSet> -> String: ID of HWSet
 #          <IDProject> -> String: ID of Project
 #          <quantity> -> Int: HW to be checked out
@@ -215,18 +238,16 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
         #do they check in up to how much they have checked out?
         #what gets returned
 
-
     client.close()
-    return jsonify("checked in")
+    return jsonify("Success")
 
-#checkOut(): checks out HW from a HWSet
+# checkOut(): checks out HW from a HWSet
 #   Input: <IDHWSet> -> String: ID of HWSet
 #          <IDProject> -> String: ID of Project
 #          <quantity> -> Int: HW to be checked out
 #   Output:  String -> 'Success' or 'Fail'
 @app.route('/HWSets/checkOut/<IDHWSet>/<IDProject>/<quantity>')
 def HWSets_checkOut(IDHWSet, IDProject, quantity):
-    #TODO
     quantity = int(quantity)
     client = pymongo.MongoClient(clientString)
 
@@ -269,16 +290,17 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
     # else
     else:
         client.close()
-        return jsonify("Failed to check out")
+        return jsonify("Fail")
     # do they check out up to max?
     # what gets returned
     client.close()
-    return jsonify("checked out ")
+    return jsonify("Success")
 
-#HWSets_getOne()
+# HWSets_getOne(): Get information about one hardware set
 #   Input: <IDHWSet> -> String: ID of Hardware set
-#   Output: Dictionary(Map) -> Key: Project ID, Value: [name, Description]
-#           Note: the dictionary will be one entry long
+#   Output: Dictionary(Map) -> Key: HWSet ID, Value: [Capacity, Availability]
+#               Note: the dictionary will be one entry long
+#           String: "Fail" if no HWSet is found
 @app.route('/HWSets/getOne/<IDHWSet>')
 def HWSets_getOne(IDHWSet):
     #TODO
@@ -287,6 +309,10 @@ def HWSets_getOne(IDHWSet):
     HW_db = client["HW_db"]
     HW_collection = HW_db.get_collection("HW_collection")
     HW_doc = HW_collection.find_one({"ID": IDHWSet})
+
+    if HW_doc == None:
+        client.close()
+        return jsonify('Fail')
 
     HW_dict = {}
     temp_ID = HW_doc.get('ID')
@@ -298,7 +324,9 @@ def HWSets_getOne(IDHWSet):
     return HW_dict
 
 
-#Get information about all the HWSets
+#HWSets(): Get information about all the HWSets
+#   Input: none
+#   Output: Dictionary(Map) -> Key: HWSet ID, Value: [Capacity, Availability]
 @app.route('/HWSets')
 def HWSets():
     client = pymongo.MongoClient(clientString)
