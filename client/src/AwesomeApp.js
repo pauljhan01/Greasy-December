@@ -139,61 +139,41 @@ function CreateProject() {
 
 }
 
-// class CreateProject extends  React.Component {
-//
-//     state = { name: '', description: ''};
-//
-//     handleProjectName = (event) => {
-//         this.setState( { name: event.target.value })
-//     };
-//
-//     handleProjectDescription = (event) => {
-//         this.setState({description: event.target.value})
-//     };
-//
-//     handleCreateProject = () => {
-//         window.alert(`You have created Project: ${this.state.name} with Description: ${this.state.description}`)
-//         this.setState({name:'', description: ''})
-//     };
-//
-//     render() {
-//          return(
-//             <div className={"Collection"}>
-//                 <h1><strong>{this.props.text}</strong></h1>
-//                 <div className={"doc"}>
-//                     <span><TextField value={this.state.name} onChange={this.handleProjectName} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
-//                     <span><TextField value={this.state.description} onChange={this.handleProjectDescription} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
-//                     <span><Button variant="contained" size={'small'} onClick={this.handleCreateProject}>Create</Button></span>
-//                 </div>
-//             </div>
-//         );
-//     }
-// }
+function JoinProject() {
 
-class ProjectLookup extends  React.Component {
+    const [btnClick, setBtnClick] = useState(false);
+    const [responseData, setResponseData] = useState(null);
+    const [id, setId] = useState(null);
 
-    state = { id: ''};
+    let message;
 
-    handleProjectID = (event) => {
-        this.setState( { id: event.target.value })
-    };
+    useEffect( () => {
 
-    handleLookupProject = () => {
-        window.alert(`You have joined Project: ${this.state.id}`)
-        // this.setState({id:''})
-    };
+            function fetchData() {
+                return fetch(`/joinProject/<${id}>`)
+                    .then(response => response.json())
+                    .then(data => setResponseData(data))
+                    .catch(error => window.alert(error));
+            }
 
-    render() {
-         return(
-            <div className={"Collection"}>
-                <h1><strong>{this.props.text}</strong></h1>
-                <div className={"doc"}>
-                    <span><TextField value={this.state.id} onChange={this.handleProjectID} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
-                    <span><Button variant="contained" size={'small'} onClick={this.handleLookupProject}>Join</Button></span>
-                </div>
+
+        if(btnClick){
+            message = fetchData();
+            setBtnClick(false);
+            window.alert(`You have joined Project: ${id}`)
+        }
+    },[btnClick]);
+
+    return(
+        <div className={"Collection"}>
+            <h1><strong>Join Project</strong></h1>
+            <div className={"doc"}>
+                <span><TextField value={id} onChange={(e) => setId(e.target.value)} id="outlined-basic" label="Enter Name" variant="outlined" size={'small'} /></span>
+                <span><Button variant="contained" size={'small'} onClick={() => setBtnClick(true)}>Join</Button></span>
             </div>
-        );
-    }
+        </div>
+    );
+
 }
 
 function Projects () {
@@ -288,9 +268,9 @@ function AwesomeApp(){
             <Header />
             <Login />
             <CreateProject />
-            <ProjectLookup text={'Join a Project'}/>
-            
-            <Projects text={'Your Projects'}/>
+            <JoinProject />
+
+            {/*<Projects text={'Your Projects'}/>*/}
             {/*<HWSets text={'Available Hardware Sets'}/>*/}
             <Footer />
         </div>

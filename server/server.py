@@ -5,7 +5,7 @@ import hashlib
 import json
 
 app = Flask(__name__)
-clientString = "mongodb+srv://stephendov:1234December@cluster0.imzhodm.mongodb.net/?retryWrites=true&w=majority"
+# clientString = "mongodb+srv://stephendov:1234December@cluster0.imzhodm.mongodb.net/?retryWrites=true&w=majority"
 
 @app.route('/')
 def index():
@@ -36,6 +36,10 @@ def projects():
 
     #TODO
     return {"projects":["Project1", "Project2", "Project3"], "test":["test1", "test2", "test3"]} #for testing
+
+@app.route('/joinProject/<int:id>')
+def join_project():
+    return jsonify('success')
 
 #Get information about all the HWSets
 @app.route('/HWSets')
