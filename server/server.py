@@ -19,18 +19,19 @@ def login(username, password):
     return jsonify('success')
 
 
-class project:
+class Project:
     def __init__(self):
-        self.id = ''
+        self.id = 1
         self.name = ''
         self.description = ''
 
 
 projectList = []
 
+
 class ProjectEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, project):
+        if isinstance(obj, Project):
             return {
                 'name': obj.name,
                 'description': obj.description,
@@ -38,17 +39,17 @@ class ProjectEncoder(json.JSONEncoder):
             }
         return super().default(obj)
 
+
 # Temporary Create Project
 @app.route('/createProject/<string:name>/<string:description>')
 def create_project(name, description):
-    newProject = project()
+    newProject = Project()
+    newProject.id = 1
     newProject.name = name
     newProject.description = description
     projectList.append(newProject)
     json_response = json.dumps(projectList, cls=ProjectEncoder)
     return json_response, 200, {'Content-Type': 'application/json'}
-
-
 
 
 # Gets List of all Projects in the database
@@ -57,6 +58,7 @@ def projects(username):
     json_response = json.dumps(projectList, cls=ProjectEncoder)
     return json_response, 200, {'Content-Type': 'application/json'}
 
+
 # Temporary join project
 # @app.route('/joinProject/<int:id>*<string:username>')
 @app.route('/joinProject/<string:id>/<string:username>')
@@ -64,6 +66,12 @@ def projects(username):
 def join_project(id, username):
     return jsonify('success')
 
+
+@app.route('/leaveProject/<string:id>/<string:username>')
+def leave_project(id, username):
+    projectList.clear()
+    json_response = json.dumps(projectList, cls=ProjectEncoder)
+    return json_response, 200, {'Content-Type': 'application/json'}
 
 # Get information about all the HWSets
 # @app.route('/HWSets')
@@ -83,6 +91,7 @@ def join_project(id, username):
 #
 # client.close()
 # return HW_dict
+
 
 if __name__ == "__main__":
     app.run(debug=True)

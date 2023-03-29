@@ -22,6 +22,7 @@ class Header extends React.Component {
     }
 }
 
+// -------------------DEPRECATED --------------------------
 function YourProjects() {
 
     //Response variables
@@ -200,30 +201,6 @@ function YourProjects() {
         }
     }, [login, username, logout, createAccount, joinClicked, createProject, loginStatus, showProjects]);
 
-
-//     function Projects () {
-//     const components = [];
-//
-//     for (let i = 1; i < 4; i++) {
-//         components.push(Docs(`Project ${i}`));
-//     }
-//
-//     return (
-//         <projects>
-//             <div className={"collection"}>
-//                 <div>
-//                     <h1>Your Projects</h1>
-//                     {/*<div>{Docs()}</div>*/}
-//                     {components}
-//                 </div>
-//             </div>
-//         </projects>
-//     );
-// }
-
-
-
-
     return (
         <div>
 
@@ -245,6 +222,7 @@ function YourProjects() {
                         <span><Button onClick={() => setCreateAccount(true)} variant="contained" size={'small'}>Create Account</Button></span>
                     </div>
                 )}
+
             </div>
 
             {/*Join Project Section*/}
@@ -298,27 +276,6 @@ function YourProjects() {
 
         </div>
     );
-}
-
-function ProjectCall(projectList){
-    // window.alert("You've called an outside function!");
-    window.alert(projectList)
-    const components = [];
-
-    projectList.forEach(project => {
-        components.push(Docs(project.name))
-    })
-
-    return (
-        <div className={"collection"}>
-            <h1>Projects</h1>
-            <div className={"doc"}>
-                <h2>Your active projects...</h2>
-                {components}
-            </div>
-        </div>
-    )
-
 }
 function Docs(name) {
 
@@ -462,25 +419,6 @@ function Docs(name) {
     );
 
 }
-
-class ProjectDocs extends React.Component {
-
-    handleJoinProject = () => {
-        window.alert(`You have joined Project ${this.props.id}`);
-    }
-
-    render() {
-        return(
-            <div className={"doc"}>
-                <span><strong>{this.props.text}</strong></span>
-                <span>Project ID: {this.props.id}</span>
-                <span>Description: {this.props.description}</span>
-                <span><Button variant="contained" size={'small'} onClick={this.handleJoinProject}>Join</Button></span>
-            </div>
-        );
-    }
-}
-
 class HWSets extends React.Component {
 
     render() {
@@ -499,25 +437,11 @@ class HWSets extends React.Component {
         );
     }
 }
-
 class HWDocs extends React.Component {
 
-    render() {
-        return(
-            <div className={"doc"}>
-                <span><strong>{this.props.text}</strong></span>
 
-                <span><strong>Availability:</strong></span>
-                <span><strong>Capacity:</strong></span>
-
-                <span><TextField id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                <span><TextField id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
-                 <span><Button variant="contained" size={'small'}>Check In</Button></span>
-                <span><Button variant="contained" size={'small'}>Check Out</Button></span>
-            </div>
-        )
-    }
 }
+// --------------------------------------------------------
 
 class Footer extends React.Component {
     render() {
@@ -538,6 +462,7 @@ function AwesomeApp(){
     const [showProjectsMessage, setShowProjectsMessage] = useState(null);
     const [checkinMessage, setCheckinMessage] = useState(null);
     const [checkoutMessage, setCheckoutMessage] = useState(null);
+    const [leaveMessage, setLeaveMessage] = useState(null);
 
     // Login variables
     const [loginLabel, setLoginLabel] = useState('Log In');
@@ -552,10 +477,15 @@ function AwesomeApp(){
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [createProject, setCreateProject] = useState(false);
+    const [id, setId] = useState('');
 
     // join project variables
     const [joinClicked, setJoinClicked] = useState(false);
-    const [id, setId] = useState('');
+    const [joinId, setJoinId] = useState('');
+
+    // leave project variables
+    const [leaveProject, setLeaveProject] = useState(false);
+
 
     //Project Variables
     const [getProjects, setGetProjects] = useState([]);
@@ -608,6 +538,14 @@ function AwesomeApp(){
                 .catch(error => window.alert(error));
         }
 
+        //leave project hook
+        function fetchLeave(){
+            return fetch(`/leaveProject/<${id}>/<${username}>`)
+                .then(response => response.json())
+                .then(data => setLeaveMessage(data))
+                .catch(error => window.alert(error));
+        }
+
         //show projects hooks
         function fetchShowProjects(){
             return fetch(`/projects/<${username}>`)
@@ -646,12 +584,20 @@ function AwesomeApp(){
             window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
             setProjectName('');
             setProjectDescription('');
+            setId('1');
             fetchShowProjects();
         }
         if(joinClicked){
             fetchJoin();
             window.alert(`You have joined Project: ${id}`)
             setJoinClicked(false);
+            setJoinId('');
+            fetchShowProjects();
+        }
+        if(leaveProject){
+            fetchLeave();
+            window.alert(`You have left Project: ${id}`)
+            setLeaveProject(false);
             setId('');
             fetchShowProjects();
         }
@@ -671,8 +617,56 @@ function AwesomeApp(){
                 setAvail1(newAmt);
             }
         }
+        if(checkout1){
+            setCheckout1(false);
 
-    },[login, logout, createAccount, loginStatus, createProject, joinClicked, checkin1]);
+            const newAmt = avail1 - qty1;
+
+            if(qty1 > avail1){
+                window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 where checked out`);
+                setQty1(0);
+                setAvail1(0);
+            }
+            else {
+                window.alert(`You have checked out ${qty1} units from HWSet1.`);
+                setQty1(0);
+                setAvail1(newAmt);
+            }
+        }
+        if(checkin2){
+            setCheckin2(false);
+
+            const newAmt = avail2 + qty2;
+
+            if(newAmt > cap2){
+                setQty2(0);
+                setAvail2(cap2);
+                window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 where NOT checked in`);
+            }
+            else {
+                window.alert(`You have checked in ${qty2} units from HWSet2.`);
+                setQty2(0);
+                setAvail2(newAmt);
+            }
+        }
+        if(checkout2){
+            setCheckout2(false);
+
+            const newAmt = avail2 - qty2;
+
+            if(qty2 > avail2){
+                window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 where checked out`);
+                setQty2(0);
+                setAvail2(0);
+            }
+            else {
+                window.alert(`You have checked out ${qty2} units from HWSet2.`);
+                setQty2(0);
+                setAvail2(newAmt);
+            }
+        }
+
+    },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, checkin1, checkin2, checkout1, checkout2]);
 
     return (
         <div className={"App"}>
@@ -712,7 +706,7 @@ function AwesomeApp(){
             <div className={"collection"}>
                 <div className={"login"}>
                     <h1><strong>Join Project</strong></h1>
-                    <span><TextField value={id} onChange={(e) => setId(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
+                    <span><TextField value={joinId} onChange={(e) => setJoinId(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
                     <span><Button variant="contained" size={'small'} onClick={() => setJoinClicked(true)}>Join</Button></span>
                     {/*Message Section*/}
                     <div>
@@ -736,24 +730,24 @@ function AwesomeApp(){
                             <div key={project.id}>
 
                                 <div className={"doc"}>
-                                     <h2><strong>Project: {project.name}</strong></h2>
+                                     <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
                                     <div className={"docHeader"}>
                                         <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
-                                        <span><Button variant="contained" size={'small'}>Leave</Button></span>
+                                        <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
                                     </div>
                                     <span className={"hardwareSet"}>
                                         <span><strong>HWSet1</strong> </span>
                                         <span><strong>Availability: </strong> {avail1} / {cap1} </span>
                                         <span><TextField value={qty1} onChange={(e)=> setQty1(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
                                         <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                        <span><Button variant="contained" size={'small'}>Check Out</Button></span>
+                                        <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
                                     </span>
                                      <span className={"hardwareSet"}>
                                         <span><strong>HWSet2</strong> </span>
                                         <span><strong>Availability: </strong> {avail2} / {cap2} </span>
-                                        <span><TextField id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                        <span><Button variant="contained" size={'small'}>Check In</Button></span>
-                                        <span><Button variant="contained" size={'small'}>Check Out</Button></span>
+                                        <span><TextField value={qty2} onChange={(e)=> setQty2(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                                        <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
+                                        <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
                                     </span>
                                  </div>
 
