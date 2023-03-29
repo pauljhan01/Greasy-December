@@ -191,6 +191,28 @@ def projects_getByID(projectID):
     client.close()
     return Project_dict
 
+@app.route('/projects/getByIDV2/<projectID>')
+def projects_getByIDV2(projectID):
+    client = pymongo.MongoClient(clientString)
+
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    Project_dict = {}
+    temp_ID = Projects_Document.get('ID')
+    temp_Name = Projects_Document.get('Name')
+    temp_Description = Projects_Document.get('Description')
+    temp_CheckedOut = Projects_Document.get('CheckedOut')
+    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
+
+    client.close()
+    return jsonify(temp_ID + '+' + temp_Name)
+
 # HWSets_getOne(): Get information about one hardware set
 #   Input: <IDHWSet> -> String: ID of Hardware set
 #   Output: Dictionary(Map) -> Key: HWSet ID, Value: [Capacity, Availability]
@@ -217,6 +239,26 @@ def projects_getByName(projectName):
 
     client.close()
     return Project_dict
+
+
+#projects_joinByID(projectID): Get one project by ID
+#   Inputs: <projectName> -> String: name of project
+#   Output:  String: "Fail" if no project is found
+#                    "Success" if project exists
+@app.route('/projects/joinByID/<projectID>')
+def projects_joinByID(projectID):
+    client = pymongo.MongoClient(clientString)
+
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    client.close()
+    return jsonify("Success")
 
 #------ HW_db functions --------------------------------------------------------------------------------------------------------
 
@@ -255,6 +297,11 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
     #if map(IDHWSet, qty) -> qty >= quantity
     HW_avail = HW_Document.get("Availability")
     qtyCheckedOut = Projects_checkedOut.get(IDHWSet)
+
+    if qtyCheckedOut == None:
+        client.close()
+        return jsonify("Fail")
+
     if qtyCheckedOut >= quantity:
         HW_collection.update_one({"ID": IDHWSet},
                                  {"$set": {"Availability": int(HW_avail) + quantity}})
@@ -381,6 +428,50 @@ def HWSets():
 
     client.close()
     return HW_dict
+
+#HWSets(): Get information about all the HWSets
+#   Input: none
+#   Output: Dictionary(Map) -> Key: hardware set count, Value: [HWSet IDCapacity, Availability]
+@app.route('/HWSetsV2')
+def HWSetsV2():
+    client = pymongo.MongoClient(clientString)
+
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_iterator = HW_collection.find()
+
+    HW_dict = {}
+    HWSetCounter = 1
+    for document in HW_iterator:
+        temp_ID = document.get('ID')
+        temp_Capacity = document.get('Capacity')
+        temp_Availability = document.get('Availability')
+        HW_dict["set" + str(HWSetCounter)] = [temp_ID, temp_Capacity, temp_Availability]
+        HWSetCounter += 1
+
+    client.close()
+    return HW_dict
+
+#HWSets(): Get information about all the HWSets
+#   Input: none
+#   Output: Dictionary(Map) -> Key: hardware set count, Value: [HWSet IDCapacity, Availability]
+@app.route('/HWSetsV3')
+def HWSetsV3():
+    client = pymongo.MongoClient(clientString)
+
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_iterator = HW_collection.find()
+
+    HW_string = ''
+    for document in HW_iterator:
+        temp_ID = document.get('ID')
+        temp_Capacity = document.get('Capacity')
+        temp_Availability = document.get('Availability')
+        HW_string += str(temp_ID) + '+' + str(temp_Capacity) + '+' + str(temp_Availability) + '+'
+
+    client.close()
+    return jsonify(HW_string)
 
 if __name__ == "__main__":
     app.run(debug=True)
