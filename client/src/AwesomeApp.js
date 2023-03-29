@@ -692,82 +692,90 @@ function AwesomeApp(){
                 )}
             </div>
 
-            {/*Create Project Section*/}
-            <div className={"collection"}>
-                <div className={"login"}>
-                    <h1><strong>Create Project</strong></h1>
-                    <span><TextField value={projectName} onChange={(e) => setProjectName(e.target.value)} id="outlined-basic" label="Enter Project Name" variant="outlined" size={'small'} /></span>
-                    <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
-                    <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
-                </div>
-            </div>
 
-           {/*Join Project Section*/}
-            <div className={"collection"}>
-                <div className={"login"}>
-                    <h1><strong>Join Project</strong></h1>
-                    <span><TextField value={joinId} onChange={(e) => setJoinId(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
-                    <span><Button variant="contained" size={'small'} onClick={() => setJoinClicked(true)}>Join</Button></span>
-                    {/*Message Section*/}
-                    <div>
-                        {joinMessage && (
-                            <div>
-                                <p>Response data:</p>
-                                <pre>{JSON.stringify(joinMessage, null, 2)}</pre>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+
 
             {/*Show Project List Section if logged in*/}
             { loginStatus ? (
-                <div className={"collection"}>
-                    <h1>Projects</h1>
-                    <div className={"doc"}>
-                        <h2>Your active projects...</h2>
-                        {getProjects.map((project) => (
-                            <div key={project.id}>
 
-                                <div className={"doc"}>
-                                     <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
-                                    <div className={"docHeader"}>
-                                        <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
-                                        <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
-                                    </div>
-                                    <span className={"hardwareSet"}>
-                                        <span><strong>HWSet1</strong> </span>
-                                        <span><strong>Availability: </strong> {avail1} / {cap1} </span>
-                                        <span><TextField value={qty1} onChange={(e)=> setQty1(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                        <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                        <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                                    </span>
-                                     <span className={"hardwareSet"}>
-                                        <span><strong>HWSet2</strong> </span>
-                                        <span><strong>Availability: </strong> {avail2} / {cap2} </span>
-                                        <span><TextField value={qty2} onChange={(e)=> setQty2(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                        <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                        <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                                    </span>
-                                 </div>
+                <div>
 
-                            </div>
-                         ))}
-                        {getProjects && (
-                            <div>
-                              <p>Response data:</p>
-                              <pre>{JSON.stringify(getProjects, null, 2)}</pre>
-                            </div>
-                        )}
+                    {/*Create Project Section*/}
+                    <div className={"collection"}>
+                        <div className={"login"}>
+                            <h1><strong>Create Project</strong></h1>
+                            <span><TextField value={projectName} onChange={(e) => setProjectName(e.target.value)} id="outlined-basic" label="Enter Project Name" variant="outlined" size={'small'} /></span>
+                            <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
+                            <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
+                        </div>
                     </div>
-                    {/*{ProjectCall(getProjects)}*/}
+
+                   {/*Join Project Section*/}
+                    <div className={"collection"}>
+                        <div className={"login"}>
+                            <h1><strong>Join Project</strong></h1>
+                            <span><TextField value={joinId} onChange={(e) => setJoinId(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} /></span>
+                            <span><Button variant="contained" size={'small'} onClick={() => setJoinClicked(true)}>Join</Button></span>
+                            {/*Message Section*/}
+                            <div>
+                                {joinMessage && (
+                                    <div>
+                                        <p>Response data:</p>
+                                        <pre>{JSON.stringify(joinMessage, null, 2)}</pre>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={"collection"}>
+                        <h1>Projects</h1>
+                        <div className={"doc"}>
+                            <h2>Your active projects...</h2>
+                            {getProjects.map((project) => (
+                                <div key={project.id}>
+
+                                    <div className={"doc"}>
+                                         <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
+                                        <div className={"docHeader"}>
+                                            <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
+                                            <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
+                                        </div>
+                                        <span className={"hardwareSet"}>
+                                            <span><strong>HWSet1</strong> </span>
+                                            <span><strong>Availability: </strong> {avail1} / {cap1} </span>
+                                            <span><TextField value={qty1} onChange={(e)=> setQty1(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                                            <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
+                                            <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
+                                        </span>
+                                         <span className={"hardwareSet"}>
+                                            <span><strong>HWSet2</strong> </span>
+                                            <span><strong>Availability: </strong> {avail2} / {cap2} </span>
+                                            <span><TextField value={qty2} onChange={(e)=> setQty2(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                                            <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
+                                            <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
+                                        </span>
+                                     </div>
+
+                                </div>
+                             ))}
+                            {getProjects && (
+                                <div>
+                                  <p>Response data:</p>
+                                  <pre>{JSON.stringify(getProjects, null, 2)}</pre>
+                                </div>
+                            )}
+                        </div>
+                        {/*{ProjectCall(getProjects)}*/}
+                    </div>
+
                 </div>
 
             ):(
                 <div className={"collection"}>
                     <h1>Projects</h1>
                     <div className={"doc"}>
-                        <h2>You have no active projects.</h2>
+                        <h2>Log in to see your projects.</h2>
                     </div>
                 </div>
             )}
