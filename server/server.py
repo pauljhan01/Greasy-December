@@ -30,9 +30,10 @@ def createUser(userName, password):
         client.close()
         return jsonify('Fail')
 
+    encryptedUserName = hashlib.sha256(userName.encode())
     encryptedPassword = hashlib.sha256(password.encode())
     Users_collection.insert_one({
-        "userID": userName,
+        "userID": encryptedUserName.hexdigest(),
         "userPassword": encryptedPassword.hexdigest(),
     })
 
@@ -48,15 +49,20 @@ def login(userName, password):
     client = pymongo.MongoClient(clientString)
     Users_db = client["Users_db"]
     Users_collection = Users_db.get_collection("Users_collection");
-    Users_Document = Users_collection.find_one({"userID": str(userName)})
+    encryptedInputUsername = hashlib.sha256(userName.encode())
+    Users_Document = Users_collection.find_one({"userID": encryptedInputUsername.hexdigest()})
+
+    if Users_Document == None:
+        client.close()
+        return jsonify('Fail')
+
     databasePassword = Users_Document.get("userPassword")
+
 
     encryptedInputPassword = hashlib.sha256(password.encode())
 
     client.close()
-    if Users_Document == None:
-        return jsonify('Fail')
-    if userName == Users_Document.get("userID") and encryptedInputPassword.hexdigest() == databasePassword:
+    if encryptedInputUsername.hexdigest() == Users_Document.get("userID") and encryptedInputPassword.hexdigest() == databasePassword:
         return jsonify('Success')
     else:
         return jsonify('Fail')
@@ -113,16 +119,54 @@ def createProject(projectName, projectDescription):
         return jsonify('Fail')
 
     Project_ID = random.randint(minID, maxID)
-    while Projects_collection.find_one({"ID": int(Project_ID)}) != None:
+    while Projects_collection.find_one({"ID": Project_ID}) != None:
         Project_ID = random.randint(minID, maxID)
 
     Projects_collection.insert_one({
         "Name": projectName,
-        "ID": Project_ID,
+        "ID": str(Project_ID),
         "Description": projectDescription,
-        "CheckedOut": {}
+        "CheckedOut": {},
+        "ApprovedUsers": []
     })
 
+
+    client.close()
+    return jsonify('Success')
+
+# createProjectWithID(projectName, projectDescription, projectID): Creates New project document in Projects_db
+#   Inputs: <projectName> -> String: name of project
+#           <projectDescription> -> String: Description of project
+#           <projectID> -> String: Project ID
+#   Outputs: String -> 'Success" or 'Fail'
+@app.route('/projects/createProject/<projectName>/<projectDescription>/<projectID>')
+def createProjectWithID(projectName, projectDescription, projectID):
+    client = pymongo.MongoClient(clientString)
+
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    #check if out of ID's
+    projectIterator = Projects_collection.find()
+    projectCount = 0
+    for docs in projectIterator:
+        projectCount += 1
+
+    #check if project already exists
+    Project_Document = Projects_collection.find_one({"Name": str(projectName)})
+    if Project_Document != None:
+        return jsonify('Fail')
+
+    Project_Document = Projects_collection.find_one({"ID": str(projectID)})
+    if Project_Document != None:
+        return jsonify('Fail')
+
+    Projects_collection.insert_one({
+        "Name": projectName,
+        "ID": projectID,
+        "Description": projectDescription,
+        "CheckedOut": {},
+        "ApprovedUsers": []
+    })
 
     client.close()
     return jsonify('Success')
@@ -138,7 +182,7 @@ def projects_getByID(projectID):
 
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(projectID)})
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
 
     if Projects_Document == None:
         client.close()
@@ -153,6 +197,32 @@ def projects_getByID(projectID):
 
     client.close()
     return Project_dict
+
+#projects_getByIDV2(projectID): Get one project by ID
+#   Inputs: <projectName> -> String: name of project
+#   Output: String -> temp_ID + '+' + temp_Name
+#           String: "Fail" if no HWSet is found
+@app.route('/projects/getByIDV2/<projectID>')
+def projects_getByIDV2(projectID):
+    client = pymongo.MongoClient(clientString)
+
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    Project_dict = {}
+    temp_ID = Projects_Document.get('ID')
+    temp_Name = Projects_Document.get('Name')
+    temp_Description = Projects_Document.get('Description')
+    temp_CheckedOut = Projects_Document.get('CheckedOut')
+    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
+
+    client.close()
+    return jsonify(temp_ID + '+' + temp_Name)
 
 # HWSets_getOne(): Get information about one hardware set
 #   Input: <IDHWSet> -> String: ID of Hardware set
@@ -181,6 +251,63 @@ def projects_getByName(projectName):
     client.close()
     return Project_dict
 
+
+#projects_joinByID(projectID, userName): Get one project by ID
+#   Inputs: <projectName> -> String: name of project
+#           <userName> -> String: name of user joining project
+#   Output:  String: "Fail" if no project is found
+#                    "Success" if project exists
+@app.route('/projects/joinByID/<projectID>/<userName>')
+def projects_joinByID(projectID, userName):
+    client = pymongo.MongoClient(clientString)
+    encryptedInputUsername = hashlib.sha256(userName.encode())
+    encryptedInputUsername = encryptedInputUsername.hexdigest()
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    if Projects_Document_ApprovedList.count(encryptedInputUsername) == 0:
+        Projects_Document_ApprovedList.append(encryptedInputUsername)
+        Projects_collection.update_one({"ID": projectID},
+                                 {"$set": { "ApprovedUsers": Projects_Document_ApprovedList}})
+
+
+    client.close()
+    return jsonify("Success")
+
+#projects_leaveByID(projectID, userName): Get one project by ID
+#   Inputs: <projectName> -> String: name of project
+#           <userName> -> String: name of user leaving project
+#   Output:  String: "Fail"
+#                    "Success"
+@app.route('/projects/leaveByID/<projectID>/<userName>')
+def projects_leaveByID(projectID, userName):
+    client = pymongo.MongoClient(clientString)
+    encryptedInputUsername = hashlib.sha256(userName.encode())
+    encryptedInputUsername = encryptedInputUsername.hexdigest()
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": projectID})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    if Projects_Document_ApprovedList.count(encryptedInputUsername) > 0:
+        Projects_Document_ApprovedList.remove(encryptedInputUsername)
+        Projects_collection.update_one({"ID": projectID},
+                                 {"$set": {"ApprovedUsers": Projects_Document_ApprovedList}})
+
+
+    client.close()
+    return jsonify("Success")
+
 #------ HW_db functions --------------------------------------------------------------------------------------------------------
 
 # checkIn(): checks in HW back into its HWSet
@@ -197,7 +324,7 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
     # get project
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(IDProject)})
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
 
     if Projects_Document == None:
         client.close()
@@ -218,6 +345,11 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
     #if map(IDHWSet, qty) -> qty >= quantity
     HW_avail = HW_Document.get("Availability")
     qtyCheckedOut = Projects_checkedOut.get(IDHWSet)
+
+    if qtyCheckedOut == None:
+        client.close()
+        return jsonify("Fail")
+
     if qtyCheckedOut >= quantity:
         HW_collection.update_one({"ID": IDHWSet},
                                  {"$set": {"Availability": int(HW_avail) + quantity}})
@@ -227,7 +359,7 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
         else:
             Projects_checkedOut[IDHWSet] -= quantity
 
-        Projects_collection.update_one({"ID": int(IDProject)},
+        Projects_collection.update_one({"ID": IDProject},
                                  {"$set": { "CheckedOut": Projects_checkedOut}})
         #then they can check in
         #update checkedout map for IDHWSet
@@ -254,7 +386,7 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
     # get project
     Projects_db = client["Projects_db"]
     Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": int(IDProject)})
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
 
     if Projects_Document == None:
         client.close()
@@ -282,7 +414,7 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
         else:
             Projects_checkedOut[IDHWSet] += quantity
 
-        Projects_collection.update_one({"ID": int(IDProject)},
+        Projects_collection.update_one({"ID": IDProject},
                                  {"$set": { "CheckedOut": Projects_checkedOut}})
 
         # then they can check out
@@ -344,6 +476,50 @@ def HWSets():
 
     client.close()
     return HW_dict
+
+#HWSets(): Get information about all the HWSets
+#   Input: none
+#   Output: Dictionary(Map) -> Key: hardware set count, Value: [HWSet IDCapacity, Availability]
+@app.route('/HWSetsV2')
+def HWSetsV2():
+    client = pymongo.MongoClient(clientString)
+
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_iterator = HW_collection.find()
+
+    HW_dict = {}
+    HWSetCounter = 1
+    for document in HW_iterator:
+        temp_ID = document.get('ID')
+        temp_Capacity = document.get('Capacity')
+        temp_Availability = document.get('Availability')
+        HW_dict["set" + str(HWSetCounter)] = [temp_ID, temp_Capacity, temp_Availability]
+        HWSetCounter += 1
+
+    client.close()
+    return HW_dict
+
+#HWSetsV3(): Get information about all the HWSets
+#   Input: none
+#   Output: String -> str(temp_ID) + '+' + str(temp_Capacity) + '+' + str(temp_Availability) + '+' ... str(temp_ID) + '+' + str(temp_Capacity) + '+' + str(temp_Availability) + '+'
+@app.route('/HWSetsV3')
+def HWSetsV3():
+    client = pymongo.MongoClient(clientString)
+
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_iterator = HW_collection.find()
+
+    HW_string = ''
+    for document in HW_iterator:
+        temp_ID = document.get('ID')
+        temp_Capacity = document.get('Capacity')
+        temp_Availability = document.get('Availability')
+        HW_string += str(temp_ID) + '+' + str(temp_Capacity) + '+' + str(temp_Availability) + '+'
+
+    client.close()
+    return jsonify(HW_string)
 
 if __name__ == "__main__":
     app.run(debug=True)
