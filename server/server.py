@@ -21,9 +21,11 @@ def login(username, password):
 
 class Project:
     def __init__(self):
-        self.id = 1
+        self.id = '1'
         self.name = ''
         self.description = ''
+        self.hardwareSet1CheckedOut = '0'
+        self.hardwareSet2CheckedOut = '0'
 
 
 projectList = []
@@ -44,9 +46,11 @@ class ProjectEncoder(json.JSONEncoder):
 @app.route('/createProject/<string:name>/<string:description>')
 def create_project(name, description):
     newProject = Project()
-    newProject.id = 1
+    newProject.id = '1'
     newProject.name = name
     newProject.description = description
+    newProject.hardwareSet1CheckedOut = '0'
+    newProject.hardwareSet2CheckedOut = '0'
     projectList.append(newProject)
     json_response = json.dumps(projectList, cls=ProjectEncoder)
     return json_response, 200, {'Content-Type': 'application/json'}

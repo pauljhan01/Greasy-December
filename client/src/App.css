@@ -131,8 +131,16 @@ input {
   gap: 15px;
 }
 .hardwareSet {
-  display: flex;
+  display: inline-flex;
   justify-content: space-between;
+  gap: 15px;
+
+}
+
+.hardwareSetR {
+  display: flex;
+  text-align: right;
+  justify-content: center;
   gap: 15px;
 
 }
