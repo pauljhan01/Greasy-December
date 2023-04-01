@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 /client/awesomeapp461/node_modules/
-=======
-
-.idea/workspace.xml
-.idea/Greasy-December.iml
-.idea/misc.xml
->>>>>>> 64fbb59ece9c422bf43f4f9cac063365a42326d9
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/inspectionProfiles/Project_Default.xml
 .idea/vcs.xml
+=======
+.idea/Greasy-December.iml
+.idea/misc.xml
+.idea/workspace.xml
