@@ -1,0 +1,24 @@
+Login:  username+password success/fail
+create: ""
+
+projects: project id, array with name and description
+
+create project name+description --> id
+
+HWSets (checkin/checkout)
+hwsetID
+
+Requests -> HWSets returns all HWset data
+
+
+
+Keep track of an active project
+
+Techincal Debt
+- Login does not handle success
+- Login does not handle fail
+
+
+//TODO
+- Add project id to projects list
+- update so Leave removes from the list on the backend

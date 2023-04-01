@@ -63,32 +63,35 @@ input {
 }
 
 .collection {
-  margin-bottom: 100px;
+  /*background-color: white;*/
+  /*color: black;*/
+  margin-bottom: 50px;
   padding-top: 5px;
   padding-bottom: 15px;
   padding-left: 40px;
   padding-right: 40px;
-  border-style: solid;
-  display: inline-block;
+  /*border-style: solid;*/
+  display: block;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 
 .doc {
   background-color: #ffffff;
   color: #330033;
   border-style: solid;
   border-color: #61dafb;
-  margin-bottom: 10px;
+  margin-bottom: 50px;
   margin-left: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
-  display: inline-block;
+  display: block;
   flex-direction: row;
-  text-align: center;
+  /*text-align: center;*/
 }
 
 
@@ -102,7 +105,7 @@ input {
   color: #330033;
   border-style: solid;
   border-color: #61dafb;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   margin-left: 20px;
   /*padding-top: 10px;*/
   padding-bottom: 20px;
@@ -120,6 +123,32 @@ input {
 
 .loginHeader {
   margin-bottom: 15px;
+}
+
+.docHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+.hardwareSet {
+  display: inline-flex;
+  justify-content: space-between;
+  gap: 15px;
+
+}
+
+.hardwareSetR {
+  display: flex;
+  text-align: right;
+  justify-content: center;
+  gap: 15px;
+
+}
+
+.spacearound {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
 }
 
 .footer {
