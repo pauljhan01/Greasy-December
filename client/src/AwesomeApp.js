@@ -184,12 +184,19 @@ function AwesomeApp(){
             if(newAmt > cap1){
                 setQty1(0);
                 setAvail1(cap1);
-                window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 where NOT checked in`);
+                window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were NOT checked in`);
             }
             else {
-                window.alert(`You have checked in ${qty1} units from HWSet1.`);
-                setQty1(0);
-                setAvail1(newAmt);
+                fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
+                   response => response.json() 
+                ).then(
+                    window.alert(`You have checked in ${qty1} units from HWSet1`),
+                    setQty1(0),
+                    setAvail1(newAmt)
+                ).
+                catch(
+                    window.alert(`Checking into HWSet1 failed. Please try again.`) 
+                )
             }
         }
         if(checkout1){
@@ -198,14 +205,22 @@ function AwesomeApp(){
             const newAmt = avail1 - qty1;
 
             if(qty1 > avail1){
-                window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 where checked out`);
-                setQty1(0);
-                setAvail1(0);
+                fetch(`HWSets/checkOut/${id}/HWSet1/${avail1}`).then(
+                    window.alert(`You are attempting to check out too many units! ${avail0} units from HWSet1 were checked out`),
+                    setQty1(0),
+                    setAvail1(0) 
+                ).catch(
+                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
+                )
             }
             else {
-                window.alert(`You have checked out ${qty1} units from HWSet1.`);
-                setQty1(0);
-                setAvail1(newAmt);
+                fetch(`HWSets/checkOut/${id}/HWSet1/${qty1}`).then(
+                    window.alert(`You have checked out ${qty1} units from HWSet1`),
+                    setQty1(0),
+                    setAvail1(newAmt)
+                ).catch(
+                    window.alert('Checking out from HWSet1 failed. Please try again.')
+                )
             }
         }
         if(checkin2){
@@ -216,7 +231,7 @@ function AwesomeApp(){
             if(newAmt > cap2){
                 setQty2(0);
                 setAvail2(cap2);
-                window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 where NOT checked in`);
+                window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were NOT checked in`);
             }
             else {
                 window.alert(`You have checked in ${qty2} units from HWSet2.`);
@@ -230,7 +245,7 @@ function AwesomeApp(){
             const newAmt = avail2 - qty2;
 
             if(qty2 > avail2){
-                window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 where checked out`);
+                window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
                 setQty2(0);
                 setAvail2(0);
             }
