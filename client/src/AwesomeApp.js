@@ -182,9 +182,13 @@ function AwesomeApp(){
             const newAmt = avail1 + qty1;
 
             if(newAmt > cap1){
-                setQty1(0);
-                setAvail1(cap1);
-                window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were NOT checked in`);
+                fetch(`HWSets/checkIn/${id}/HWSet1/${avail1}`).then(
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`),
+                    setQty1(0),
+                    setAvail1(cap1)
+                ).catch(
+                    window.alert('Checking into HWSet1 failed. Please try again')
+                )
             }
             else {
                 fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
