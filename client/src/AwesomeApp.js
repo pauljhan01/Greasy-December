@@ -116,7 +116,7 @@ function AwesomeApp(){
 
         //leave project hook
         function fetchLeave(){
-            return fetch(`/leaveProject/<${id}>/<${username}>`)
+            return fetch(`projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => setLeaveMessage(data))
                 .catch(error => window.alert(error));
@@ -177,10 +177,16 @@ function AwesomeApp(){
         }
         if(leaveProject){
             fetchLeave();
-            window.alert(`You have left Project: ${id}`)
-            setLeaveProject(false);
-            setId('');
-            fetchShowProjects();
+            if(leaveMessage === 'Fail'){
+                window.alert('Leaving project failed. Please try again')
+                setLeaveProject(false)
+            }
+            else{
+                window.alert(`You have left Project: ${id}`)
+                setLeaveProject(false);
+                setId('');
+                fetchShowProjects();
+            }  
         }
         if(checkin1){
             setCheckin1(false);
