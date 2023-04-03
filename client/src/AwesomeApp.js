@@ -99,7 +99,7 @@ function AwesomeApp(){
 
         //create project hooks
         function fetchCreateProject() {
-            return fetch(`/createProject/<${id}>/<${projectDescription}>`)
+            return fetch(`projects/createProject/<${id}>/<${projectDescription}>`)
                 .then(response => response.json())
                 .then(data => setCreateProjectMessage(data))
                 // .then(data => fetchShowProjects())
@@ -108,7 +108,7 @@ function AwesomeApp(){
 
         //join project hook
         function fetchJoin() {
-            return fetch(`/joinProject/<${id}>/<${username}>`)
+            return fetch(`projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => setJoinMessage(data))
                 .catch(error => window.alert(error));
@@ -133,9 +133,15 @@ function AwesomeApp(){
         // *** CONDITIONALS ***
         if(login) {
             fetchLogin();
-            setLogin(false);
-            setLoginLabel('Logged In');
-            setLoginStatus(true);
+            if(loginMessage === 'Fail'){
+                window.alert('Your username or password is incorrect. Please try again.')
+                setLogin(false)
+            }
+            else{
+               setLogin(false) 
+               setLoginLabel('Logged In');
+               setLoginStatus(true);
+            }
         }
         if(logout){
             setLogout(false);
