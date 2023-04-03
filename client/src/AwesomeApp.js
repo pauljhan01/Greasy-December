@@ -99,7 +99,7 @@ function AwesomeApp(){
 
         //create project hooks
         function fetchCreateProject() {
-            return fetch(`/createProject/<${id}>/<${projectDescription}>`)
+            return fetch(`projects/createProject/<${id}>/<${projectDescription}>`)
                 .then(response => response.json())
                 .then(data => setCreateProjectMessage(data))
                 // .then(data => fetchShowProjects())
@@ -108,7 +108,7 @@ function AwesomeApp(){
 
         //join project hook
         function fetchJoin() {
-            return fetch(`/joinProject/<${id}>/<${username}>`)
+            return fetch(`projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => setJoinMessage(data))
                 .catch(error => window.alert(error));
@@ -116,7 +116,7 @@ function AwesomeApp(){
 
         //leave project hook
         function fetchLeave(){
-            return fetch(`/leaveProject/<${id}>/<${username}>`)
+            return fetch(`projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => setLeaveMessage(data))
                 .catch(error => window.alert(error));
@@ -133,9 +133,15 @@ function AwesomeApp(){
         // *** CONDITIONALS ***
         if(login) {
             fetchLogin();
-            setLogin(false);
-            setLoginLabel('Logged In');
-            setLoginStatus(true);
+            if(loginMessage === 'Fail'){
+                window.alert('Your username or password is incorrect. Please try again.')
+                setLogin(false)
+            }
+            else{
+               setLogin(false) 
+               setLoginLabel('Logged In');
+               setLoginStatus(true);
+            }
         }
         if(logout){
             setLogout(false);
@@ -156,25 +162,47 @@ function AwesomeApp(){
         }
         if(createProject){
             fetchCreateProject();
-            setCreateProject(false);
-            window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
-            setProjectName('');
-            setProjectDescription('');
-            fetchShowProjects();
+            if(createProjectMessage === 'Fail'){
+                window.alert(`Project ${projectName} either already exists or there are max number of projects.`)
+                setProjectName('');
+                setProjectDescription('');
+                setCreateProject(false)
+                fetchShowProjects();
+            }
+            else{
+                window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
+                setProjectName('');
+                setProjectDescription('');
+                setCreateProject(false)
+                fetchShowProjects();                 
+            }
+            
         }
         if(joinClicked){
             fetchJoin();
-            window.alert(`You have joined Project: ${id}`)
-            setJoinClicked(false);
-            setId('');
-            fetchShowProjects();
+            if(joinMessage === `Fail`){
+                window.alert(`Failed to join Project ${id}. Please try again.`)
+                setJoinClicked(false)
+            }
+            else{
+                window.alert(`You have joined Project: ${id}`)
+                setJoinClicked(false);
+                setId('');
+                fetchShowProjects();
+            }
         }
         if(leaveProject){
             fetchLeave();
-            window.alert(`You have left Project: ${id}`)
-            setLeaveProject(false);
-            setId('');
-            fetchShowProjects();
+            if(leaveMessage === 'Fail'){
+                window.alert('Leaving project failed. Please try again')
+                setLeaveProject(false)
+            }
+            else{
+                window.alert(`You have left Project: ${id}`)
+                setLeaveProject(false);
+                setId('');
+                fetchShowProjects();
+            }  
         }
         if(checkin1){
             setCheckin1(false);
