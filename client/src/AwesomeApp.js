@@ -162,11 +162,21 @@ function AwesomeApp(){
         }
         if(createProject){
             fetchCreateProject();
-            setCreateProject(false);
-            window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
-            setProjectName('');
-            setProjectDescription('');
-            fetchShowProjects();
+            if(createProjectMessage === 'Fail'){
+                window.alert(`Project ${projectName} either already exists or there are max number of projects.`)
+                setProjectName('');
+                setProjectDescription('');
+                setCreateProject(false)
+                fetchShowProjects();
+            }
+            else{
+                window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
+                setProjectName('');
+                setProjectDescription('');
+                setCreateProject(false)
+                fetchShowProjects();                 
+            }
+            
         }
         if(joinClicked){
             fetchJoin();
