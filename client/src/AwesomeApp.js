@@ -170,10 +170,16 @@ function AwesomeApp(){
         }
         if(joinClicked){
             fetchJoin();
-            window.alert(`You have joined Project: ${id}`)
-            setJoinClicked(false);
-            setId('');
-            fetchShowProjects();
+            if(joinMessage === `Fail`){
+                window.alert(`Failed to join Project ${id}. Please try again.`)
+                setJoinClicked(false)
+            }
+            else{
+                window.alert(`You have joined Project: ${id}`)
+                setJoinClicked(false);
+                setId('');
+                fetchShowProjects();
+            }
         }
         if(leaveProject){
             fetchLeave();
