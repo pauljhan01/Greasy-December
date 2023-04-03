@@ -92,9 +92,26 @@ function AwesomeApp(){
         function fetchLogin() {
             return fetch(`/login/<${username}>/<${password}>`)
                 .then(response => response.json())
-                .then(data => setLoginMessage(data))
+                .then(data => {
+                    setLoginMessage(data);
+                    setLoginLabel('Logged In');
+                    setLoginStatus(true);
+                })
                 // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
-                .catch(error => window.alert(error));
+                .catch(error => window.alert('Your username or password is incorrect. Please try again.'));
+        }
+
+        function fetchCreateAccount() {
+            return fetch(`/Users_db/createUser/<${username}>/<${password}>`)
+                .then(response => response.json())
+                .then(data => {
+                    setLoginMessage(data);
+                    setLoginLabel('Logged In');
+                    setLoginStatus(true);
+                    window.alert("You've created a new account.");
+                })
+                // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
+                .catch(error => window.alert('Failed to create an account. Please try again.'));
         }
 
         //create project hooks
@@ -133,15 +150,7 @@ function AwesomeApp(){
         // *** CONDITIONALS ***
         if(login) {
             fetchLogin();
-            if(loginMessage === 'Fail'){
-                window.alert('Your username or password is incorrect. Please try again.')
-                setLogin(false)
-            }
-            else{
-               setLogin(false) 
-               setLoginLabel('Logged In');
-               setLoginStatus(true);
-            }
+            setLogin(false) ;
         }
         if(logout){
             setLogout(false);
@@ -150,11 +159,7 @@ function AwesomeApp(){
             setUsername('');
         }
         if(createAccount) {
-            window.alert("Created New Account.")
-            fetchLogin();
-            setLogin(false);
-            setLoginLabel('Logged In');
-            setLoginStatus(true);
+            fetchCreateAccount();
             setCreateAccount(false);
         }
         if(loginStatus) {
@@ -223,7 +228,7 @@ function AwesomeApp(){
                     window.alert("Checking into HWSet1 failed. Please try again.")
                 }
                 else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`),
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`)
                     setQty1(0)
                     setAvail1(newAmt)
                 }
@@ -266,7 +271,7 @@ function AwesomeApp(){
                     window.alert(`Checking out of HWSet1 failed. Please try again.`)
                 }
                 else{
-                    window.alert(`You are attempting to check out too many units! ${avail0} units from HWSet1 were checked out`)
+                    window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
                     setQty1(0)
                     setAvail1(0) 
                 }
@@ -284,8 +289,8 @@ function AwesomeApp(){
                     window.alert('Checking out from HWSet1 failed. Please try again.')
                 }
                 else{
-                    window.alert(`You have checked out ${qty1} units from HWSet1`),
-                    setQty1(0),
+                    window.alert(`You have checked out ${qty1} units from HWSet1`)
+                    setQty1(0)
                     setAvail1(newAmt)
                 }
             }
@@ -301,16 +306,15 @@ function AwesomeApp(){
                 ).then(
                     data => setCheckinMessage(data)  
                 ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet2 failed. Please try again.')
+                    error => window.alert('Checking into HWSet2 failed. Please try again.')
                 )
                 if(checkinMessage ===  `Fail`){
-                    window.alert('Checking into HWSet2 failed. Please try again.')
+                    window.alert('Checking into HWSet2 failed. Please try again.');
                 }
                 else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`),
-                    setQty2(0),
-                    setAvail2(cap2)
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`);
+                    setQty2(0);
+                    setAvail2(cap2);
                 }
             }
             else {
