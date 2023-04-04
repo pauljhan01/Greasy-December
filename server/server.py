@@ -77,6 +77,7 @@ def login(userName, password):
 #   Outputs: Dictionary(Map) -> Key: Project ID, Value: [name, Description, CheckedOut]
 @app.route('/projects')
 def projects():
+    return jsonify('Success')
     client = pymongo.MongoClient(clientString)
 
     Projects_db = client["Projects_db"]
@@ -100,7 +101,7 @@ def projects():
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/projects/createProject/<projectName>/<projectDescription>')
 def createProject(projectName, projectDescription):
-    return jsonify('Success')
+    return jsonify('Fail')
     # minID = 1000
     # maxID = 9999
     # client = pymongo.MongoClient(clientString)

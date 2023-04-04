@@ -126,8 +126,12 @@ function AwesomeApp(){
             return fetch(`projects/createProject/<${projectName}>/<${projectDescription}>`)
                 .then(response => response.json())
                 .then(data => {
-                    setCreateProjectMessage(data);
-                    window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`);
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`);
+                    } else {
+                        setCreateProjectMessage(data);
+                        window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`);
+                    }
                 })
                 .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
@@ -182,20 +186,20 @@ function AwesomeApp(){
             setCreateAccount(false);
         }
         if(loginStatus) {
-            fetchShowProjects();
+            // fetchShowProjects();
         }
         if(createProject){
             fetchCreateProject();
             setProjectName('');
             setProjectDescription('');
             setCreateProject(false)
-            fetchShowProjects();
+            // fetchShowProjects();
         }
         if(joinClicked){
             fetchJoin();
             setJoinClicked(false);
             setId('');
-            fetchShowProjects();
+            // fetchShowProjects();
         }
         if(leaveProject){
             fetchLeave();
