@@ -171,8 +171,32 @@ function AwesomeApp(){
             return fetch(`/projects`)
                 .then(response => response.json())
                 .then(data => setGetProjects(data))
-                .catch(error => window.alert("You have no active projects."))
+                .catch(error => window.alert("Get Project List Failed."))
         }
+
+
+        //Check Out Hardware
+        function fetchCheckOut(hwsetID, amount){
+            return fetch(`/HWSets/checkOut/${hwsetID}/${id}/${amount}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("System: Check Out Failed. Please try again.")}
+                })
+                .catch(error => window.alert("System: Check Out Failed. Please try again."))
+        }
+
+        //Check In Hardware
+        function fetchCheckIn(hwsetID, amount){
+            return fetch(`/HWSets/checkIn/${hwsetID}/${id}/${amount}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("System: Check In Failed. Please try again.")}
+                })
+                .catch(error => window.alert("System: Check In Failed. Please try again."))
+        }
+
 
         // *** CONDITIONALS ***
         if(login) {
@@ -217,38 +241,18 @@ function AwesomeApp(){
             const newAmt = avail1 + qty1;
 
             if(newAmt > cap1){
-                fetch(`HWSets/checkIn/${id}/HWSet1/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                   data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet1 failed. Please try again')
-                )
-                //if backend sends us failure, alert user
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`)
+                fetchCheckIn(1, avail1);
+                if (checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`);
                     setQty1(0)
                     setAvail1(newAmt)
                 }
             }
             else {
-                fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
-                   response => response.json() 
-                ).then(
-                    data => setCheckinMessage(data)
-                ).
-                catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet1 failed. Please try again.`) 
-                )
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
+                fetchCheckIn(1, qty1);
+                if ( checkinMessage == 'Fail' ) {}
+                else {
                     window.alert(`You have checked in ${qty1} units into HWSet1`)
                     setQty1(0)
                     setAvail1(newAmt)
@@ -257,39 +261,20 @@ function AwesomeApp(){
         }
         if(checkout1){
             setCheckout1(false);
-
             const newAmt = avail1 - qty1;
 
             if(qty1 > avail1){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                }
-                else{
-                    window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
-                    setQty1(0)
-                    setAvail1(0) 
+                fetchCheckOut(1, avail1);
+                if(checkoutMessage == 'Fail') {}
+                else {
+                    window.alert(`You attempted to check out too many units! ${avail1} units from HWSet1 were checked out`);
+                    setQty1(0);
+                    setAvail1(0);
                 }
             }
             else {
-                fetch(`HWSets/checkOut/${id}/HWSet1/${qty1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                }
+                fetchCheckOut(1, qty1);
+                if(checkoutMessage == 'Fail'){}
                 else{
                     window.alert(`You have checked out ${qty1} units from HWSet1`)
                     setQty1(0)
@@ -303,40 +288,22 @@ function AwesomeApp(){
             const newAmt = avail2 + qty2;
 
             if(newAmt > cap2){
-                fetch(`HWSets/checkIn/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)  
-                ).catch(
-                    error => window.alert('Checking into HWSet2 failed. Please try again.')
-                )
-                if(checkinMessage ===  `Fail`){
-                    window.alert('Checking into HWSet2 failed. Please try again.');
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`);
-                    setQty2(0);
-                    setAvail2(cap2);
+                fetchCheckIn(2, avail2);
+                if (checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet1 were not checked in`);
+                    setQty2(0)
+                    setAvail2(newAmt)
                 }
             }
             else {
-                fetch(`HWSets/checkIn/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
-                )
-                if(checkinMessage === `Fail`){
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
+                fetchCheckIn(2, qty2);
+                if ( checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You have checked in ${qty2} units into HWSet1`)
+                    setQty2(0)
+                    setAvail2(newAmt)
                 }
-                else{
-                    window.alert(`You have checked in ${qty2} units from HWSet2.`);
-                    setQty2(0);
-                    setAvail2(newAmt);
-                }
-               
             }
         }
         if(checkout2){
@@ -345,46 +312,22 @@ function AwesomeApp(){
             const newAmt = avail2 - qty2;
 
             if(qty2 > avail2){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                }
-                else{
+                fetchCheckOut(2, avail2);
+                if(checkoutMessage == 'Fail'){}
+                else {
                     window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
                     setQty2(0);
                     setAvail2(0);
                 }
-                // window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
-                // setQty2(0);
-                // setAvail2(0);
             }
             else {
-                fetch(`HWSets/checkOut/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert("Checking out from HWSet2 failed. Please try again.")
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert("Checking out from HWSet2 failed. Please try again.")  
-                }
-                else{
+                fetchCheckOut(2, avail2)
+                if(checkoutMessage == 'Fail'){}
+                else {
                     window.alert(`You have checked out ${qty2} units from HWSet2.`);
                     setQty2(0);
                     setAvail2(newAmt);
                 }
-                // window.alert(`You have checked out ${qty2} units from HWSet2.`);
-                // setQty2(0);
-                // setAvail2(newAmt);
             }
         }
 
