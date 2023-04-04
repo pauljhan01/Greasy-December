@@ -127,10 +127,13 @@ function AwesomeApp(){
 
         //join project hook
         function fetchJoin() {
-            return fetch(`projects/joinByID/<${id}>/<${username}>`)
+            return fetch(`/projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setJoinMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    setJoinMessage(data);
+                    window.alert(`You have joined Project: ${id}`);
+                })
+                .catch(error => window.alert(`Failed to join Project ${id}. Please try again.`));
         }
 
         //leave project hook
@@ -176,16 +179,9 @@ function AwesomeApp(){
         }
         if(joinClicked){
             fetchJoin();
-            if(joinMessage === `Fail`){
-                window.alert(`Failed to join Project ${id}. Please try again.`)
-                setJoinClicked(false)
-            }
-            else{
-                window.alert(`You have joined Project: ${id}`)
-                setJoinClicked(false);
-                setId('');
-                fetchShowProjects();
-            }
+            setJoinClicked(false);
+            setId('');
+            fetchShowProjects();
         }
         if(leaveProject){
             fetchLeave();

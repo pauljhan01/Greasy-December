@@ -21,25 +21,25 @@ def index():
 @app.route('/Users_db/createUser/<userName>/<password>')
 def createUser(userName, password):
     return jsonify('Success')
-    client = pymongo.MongoClient(clientString)
-    Users_db = client["Users_db"]
-    Users_collection = Users_db.get_collection("Users_collection");
-
-    Users_Document = Users_collection.find_one({"userID": str(userName)})
-    #user already exists
-    if Users_Document != None:
-        client.close()
-        return jsonify('Fail')
-
-    encryptedUserName = hashlib.sha256(userName.encode())
-    encryptedPassword = hashlib.sha256(password.encode())
-    Users_collection.insert_one({
-        "userID": encryptedUserName.hexdigest(),
-        "userPassword": encryptedPassword.hexdigest(),
-    })
-
-    client.close()
-    return jsonify('Success')
+    # client = pymongo.MongoClient(clientString)
+    # Users_db = client["Users_db"]
+    # Users_collection = Users_db.get_collection("Users_collection");
+    #
+    # Users_Document = Users_collection.find_one({"userID": str(userName)})
+    # #user already exists
+    # if Users_Document != None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # encryptedUserName = hashlib.sha256(userName.encode())
+    # encryptedPassword = hashlib.sha256(password.encode())
+    # Users_collection.insert_one({
+    #     "userID": encryptedUserName.hexdigest(),
+    #     "userPassword": encryptedPassword.hexdigest(),
+    # })
+    #
+    # client.close()
+    # return jsonify('Success')
 
 #login(fields): Validate User login in Users_db
 #   Inputs: <userName> -> string for user name
@@ -47,26 +47,27 @@ def createUser(userName, password):
 #   Outputs: String -> 'Success' or 'Fail'
 @app.route('/login/<userName>/<password>')
 def login(userName, password):
-    client = pymongo.MongoClient(clientString)
-    Users_db = client["Users_db"]
-    Users_collection = Users_db.get_collection("Users_collection");
-    encryptedInputUsername = hashlib.sha256(userName.encode())
-    Users_Document = Users_collection.find_one({"userID": encryptedInputUsername.hexdigest()})
-
-    if Users_Document == None:
-        client.close()
-        return jsonify('Fail')
-
-    databasePassword = Users_Document.get("userPassword")
-
-
-    encryptedInputPassword = hashlib.sha256(password.encode())
-
-    client.close()
-    if encryptedInputUsername.hexdigest() == Users_Document.get("userID") and encryptedInputPassword.hexdigest() == databasePassword:
-        return jsonify('Success')
-    else:
-        return jsonify('Fail')
+    return jsonify('Success')
+    # client = pymongo.MongoClient(clientString)
+    # Users_db = client["Users_db"]
+    # Users_collection = Users_db.get_collection("Users_collection");
+    # encryptedInputUsername = hashlib.sha256(userName.encode())
+    # Users_Document = Users_collection.find_one({"userID": encryptedInputUsername.hexdigest()})
+    #
+    # if Users_Document == None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # databasePassword = Users_Document.get("userPassword")
+    #
+    #
+    # encryptedInputPassword = hashlib.sha256(password.encode())
+    #
+    # client.close()
+    # if encryptedInputUsername.hexdigest() == Users_Document.get("userID") and encryptedInputPassword.hexdigest() == databasePassword:
+    #     return jsonify('Success')
+    # else:
+    #     return jsonify('Fail')
 
 
 #------ Projects_db functions --------------------------------------------------------------------------------------------------------
@@ -100,41 +101,41 @@ def projects():
 @app.route('/projects/createProject/<projectName>/<projectDescription>')
 def createProject(projectName, projectDescription):
     return jsonify('Success')
-    minID = 1000
-    maxID = 9999
-    client = pymongo.MongoClient(clientString)
-
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    #check if out of ID's
-    projectIterator = Projects_collection.find()
-    projectCount = 0
-    for docs in projectIterator:
-        projectCount += 1
-
-    if projectCount >= maxID - minID + 1:
-        return jsonify('Fail')
-
-    #check if project already exists
-    Project_Document = Projects_collection.find_one({"Name": str(projectName)})
-    if Project_Document != None:
-        return jsonify('Fail')
-
-    Project_ID = random.randint(minID, maxID)
-    while Projects_collection.find_one({"ID": Project_ID}) != None:
-        Project_ID = random.randint(minID, maxID)
-
-    Projects_collection.insert_one({
-        "Name": projectName,
-        "ID": str(Project_ID),
-        "Description": projectDescription,
-        "CheckedOut": {},
-        "ApprovedUsers": []
-    })
-
-
-    client.close()
-    return jsonify('Success')
+    # minID = 1000
+    # maxID = 9999
+    # client = pymongo.MongoClient(clientString)
+    #
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # #check if out of ID's
+    # projectIterator = Projects_collection.find()
+    # projectCount = 0
+    # for docs in projectIterator:
+    #     projectCount += 1
+    #
+    # if projectCount >= maxID - minID + 1:
+    #     return jsonify('Fail')
+    #
+    # #check if project already exists
+    # Project_Document = Projects_collection.find_one({"Name": str(projectName)})
+    # if Project_Document != None:
+    #     return jsonify('Fail')
+    #
+    # Project_ID = random.randint(minID, maxID)
+    # while Projects_collection.find_one({"ID": Project_ID}) != None:
+    #     Project_ID = random.randint(minID, maxID)
+    #
+    # Projects_collection.insert_one({
+    #     "Name": projectName,
+    #     "ID": str(Project_ID),
+    #     "Description": projectDescription,
+    #     "CheckedOut": {},
+    #     "ApprovedUsers": []
+    # })
+    #
+    #
+    # client.close()
+    # return jsonify('Success')
 
 # createProjectWithID(projectName, projectDescription, projectID): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
@@ -261,26 +262,27 @@ def projects_getByName(projectName):
 #                    "Success" if project exists
 @app.route('/projects/joinByID/<projectID>/<userName>')
 def projects_joinByID(projectID, userName):
-    client = pymongo.MongoClient(clientString)
-    encryptedInputUsername = hashlib.sha256(userName.encode())
-    encryptedInputUsername = encryptedInputUsername.hexdigest()
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": projectID})
-
-    if Projects_Document == None:
-        client.close()
-        return jsonify('Fail')
-
-    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
-    if Projects_Document_ApprovedList.count(encryptedInputUsername) == 0:
-        Projects_Document_ApprovedList.append(encryptedInputUsername)
-        Projects_collection.update_one({"ID": projectID},
-                                 {"$set": { "ApprovedUsers": Projects_Document_ApprovedList}})
-
-
-    client.close()
-    return jsonify("Success")
+    return jsonify('Success')
+    # client = pymongo.MongoClient(clientString)
+    # encryptedInputUsername = hashlib.sha256(userName.encode())
+    # encryptedInputUsername = encryptedInputUsername.hexdigest()
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # Projects_Document = Projects_collection.find_one({"ID": projectID})
+    #
+    # if Projects_Document == None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    # if Projects_Document_ApprovedList.count(encryptedInputUsername) == 0:
+    #     Projects_Document_ApprovedList.append(encryptedInputUsername)
+    #     Projects_collection.update_one({"ID": projectID},
+    #                              {"$set": { "ApprovedUsers": Projects_Document_ApprovedList}})
+    #
+    #
+    # client.close()
+    # return jsonify("Success")
 
 #projects_leaveByID(projectID, userName): Get one project by ID
 #   Inputs: <projectName> -> String: name of project
