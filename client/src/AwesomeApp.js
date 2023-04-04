@@ -116,11 +116,13 @@ function AwesomeApp(){
 
         //create project hooks
         function fetchCreateProject() {
-            return fetch(`projects/createProject/<${id}>/<${projectDescription}>`)
+            return fetch(`projects/createProject/<${projectName}>/<${projectDescription}>`)
                 .then(response => response.json())
-                .then(data => setCreateProjectMessage(data))
-                // .then(data => fetchShowProjects())
-                .catch(error => window.alert(error));
+                .then(data => {
+                    setCreateProjectMessage(data);
+                    window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`);
+                })
+                .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
 
         //join project hook
@@ -141,10 +143,10 @@ function AwesomeApp(){
 
         //show projects hooks
         function fetchShowProjects(){
-            return fetch(`/projects/<${username}>`)
+            return fetch(`/projects`)
                 .then(response => response.json())
                 .then(data => setGetProjects(data))
-                .catch(error => window.alert(error))
+                .catch(error => window.alert("You have no active projects."))
         }
 
         // *** CONDITIONALS ***
@@ -167,21 +169,10 @@ function AwesomeApp(){
         }
         if(createProject){
             fetchCreateProject();
-            if(createProjectMessage === 'Fail'){
-                window.alert(`Project ${projectName} either already exists or there are max number of projects.`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
-                fetchShowProjects();
-            }
-            else{
-                window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
-                fetchShowProjects();                 
-            }
-            
+            setProjectName('');
+            setProjectDescription('');
+            setCreateProject(false)
+            fetchShowProjects();
         }
         if(joinClicked){
             fetchJoin();

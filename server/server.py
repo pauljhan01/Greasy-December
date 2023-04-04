@@ -20,6 +20,7 @@ def index():
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/Users_db/createUser/<userName>/<password>')
 def createUser(userName, password):
+    return jsonify('Success')
     client = pymongo.MongoClient(clientString)
     Users_db = client["Users_db"]
     Users_collection = Users_db.get_collection("Users_collection");
@@ -98,6 +99,7 @@ def projects():
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/projects/createProject/<projectName>/<projectDescription>')
 def createProject(projectName, projectDescription):
+    return jsonify('Success')
     minID = 1000
     maxID = 9999
     client = pymongo.MongoClient(clientString)
