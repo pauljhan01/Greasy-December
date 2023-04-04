@@ -190,20 +190,20 @@ function AwesomeApp(){
             setCreateAccount(false);
         }
         if(loginStatus) {
-            // fetchShowProjects();
+            fetchShowProjects();
         }
         if(createProject){
             fetchCreateProject();
             setProjectName('');
             setProjectDescription('');
             setCreateProject(false)
-            // fetchShowProjects();
+            fetchShowProjects();
         }
         if(joinClicked){
             fetchJoin();
             setJoinClicked(false);
             setId('');
-            // fetchShowProjects();
+            fetchShowProjects();
         }
         if(leaveProject){
             fetchLeave();
@@ -460,30 +460,20 @@ function AwesomeApp(){
                     <div className={"collection"}>
                         <h1>Your Active Projects</h1>
                         <div className={"doc"}>
-                            {getProjects.map((project) => (
-                                <div key={project.id}>
-                                    <div className={"doc"}>
-                                         <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
-                                        <div className={"hardwareSet"}>
-                                            <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
-                                        </div>
-                                        <span className={"hardwareSet"}>
-                                            <span><strong>HWSet1</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet1CheckedOut} </span>
-                                        </span>
-                                         <span className={"hardwareSet"}>
-                                            <span><strong>HWSet2</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet2CheckedOut} </span>
-                                        </span>
-                                     </div>
+
+                            {Object.keys(getProjects).map((key) => (
+                                <div className={"doc"}>
+                                    <div>
+                                        <h2>Project Name: {getProjects[key][0]}</h2>
+                                        <strong>Project ID:</strong> {key}
+                                    </div>
+                                    <div className={"projList"}>
+                                        <strong>Description: </strong> {getProjects[key][1]}
+                                        <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                    </div>
                                 </div>
-                             ))}
-                            {getProjects && (
-                                <div>
-                                  <p>Response data:</p>
-                                  <pre>{JSON.stringify(getProjects, null, 2)}</pre>
-                                </div>
-                            )}
+                            ))}
+
                         </div>
                     </div>
 

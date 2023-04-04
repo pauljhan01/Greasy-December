@@ -79,14 +79,17 @@ def login(userName, password):
 def projects():
     Projects_dict = {}
     Projects_dict[0] = ['newProj', 'projDescription', 15]
+    Projects_dict[1] = ['another project', 'another description', 34]
+    # Projects_dict[0] = ["name":'newProj', "Description":'projDescription', "CheckoutQty":15]
+    return jsonify(Projects_dict)
     # newProject = Project()
     # newProject.id = 1
     # newProject.name = name
     # newProject.description = description
     # projectList.append(newProject)
     # json_response = json.dumps(projectList, cls=ProjectEncoder)
-    json_response = json.dumps(Projects_dict, cls=ProjectEncoder)
-    return json_response, 200, {'Content-Type': 'application/json'}
+    # json_response = json.dumps(Projects_dict, cls=ProjectEncoder)
+    # return json_response, 200, {'Content-Type': 'application/json'}
     # client = pymongo.MongoClient(clientString)
     #
     # Projects_db = client["Projects_db"]
@@ -103,6 +106,7 @@ def projects():
     #
     # client.close()
     # return Projects_dict
+
 
 # createProject(projectName, projectDescription): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
