@@ -462,16 +462,19 @@ function AwesomeApp(){
                         <div className={"doc"}>
 
                             {Object.keys(getProjects).map((key) => (
-                                <div className={"doc"}>
-                                    <div>
-                                        <h2>Project Name: {getProjects[key][0]}</h2>
-                                        <strong>Project ID:</strong> {key}
-                                    </div>
-                                    <div className={"projList"}>
-                                        <strong>Description: </strong> {getProjects[key][1]}
-                                        <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                <div className={"projBlock"}>
+                                    <div className={"doc"}>
+                                        <div>
+                                            <h2>Project Name: {getProjects[key][0]}</h2>
+                                            <strong>Project ID:</strong> {key}
+                                        </div>
+                                        <div className={"projList"}>
+                                            <strong>Description: </strong> {getProjects[key][1]}
+                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                        </div>
                                     </div>
                                 </div>
+
                             ))}
 
                         </div>
