@@ -263,7 +263,7 @@ def projects_getByName(projectName):
 #                    "Success" if project exists
 @app.route('/projects/joinByID/<projectID>/<userName>')
 def projects_joinByID(projectID, userName):
-    return jsonify('Success')
+    return jsonify('Fail')
     # client = pymongo.MongoClient(clientString)
     # encryptedInputUsername = hashlib.sha256(userName.encode())
     # encryptedInputUsername = encryptedInputUsername.hexdigest()

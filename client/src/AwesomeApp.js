@@ -141,8 +141,12 @@ function AwesomeApp(){
             return fetch(`/projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => {
-                    setJoinMessage(data);
-                    window.alert(`You have joined Project: ${id}`);
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to join Project ${id}. Please try again.`);
+                    } else {
+                        setJoinMessage(data);
+                        window.alert(`You have joined Project: ${id}`);
+                    }
                 })
                 .catch(error => window.alert(`Failed to join Project ${id}. Please try again.`));
         }
