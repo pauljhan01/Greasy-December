@@ -77,23 +77,32 @@ def login(userName, password):
 #   Outputs: Dictionary(Map) -> Key: Project ID, Value: [name, Description, CheckedOut]
 @app.route('/projects')
 def projects():
-    return jsonify('Success')
-    client = pymongo.MongoClient(clientString)
-
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_iterator = Projects_collection.find()
-
     Projects_dict = {}
-    for document in Projects_iterator:
-        temp_Name = document.get('Name')
-        temp_ID = document.get('ID')
-        temp_Description = document.get('Description')
-        temp_checkedOut = document.get('CheckedOut')
-        Projects_dict[temp_ID] = [temp_Name, temp_Description, temp_checkedOut]
-
-    client.close()
-    return Projects_dict
+    Projects_dict[0] = ['newProj', 'projDescription', 15]
+    # newProject = Project()
+    # newProject.id = 1
+    # newProject.name = name
+    # newProject.description = description
+    # projectList.append(newProject)
+    # json_response = json.dumps(projectList, cls=ProjectEncoder)
+    json_response = json.dumps(Projects_dict, cls=ProjectEncoder)
+    return json_response, 200, {'Content-Type': 'application/json'}
+    # client = pymongo.MongoClient(clientString)
+    #
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # Projects_iterator = Projects_collection.find()
+    #
+    # Projects_dict = {}
+    # for document in Projects_iterator:
+    #     temp_Name = document.get('Name')
+    #     temp_ID = document.get('ID')
+    #     temp_Description = document.get('Description')
+    #     temp_checkedOut = document.get('CheckedOut')
+    #     Projects_dict[temp_ID] = [temp_Name, temp_Description, temp_checkedOut]
+    #
+    # client.close()
+    # return Projects_dict
 
 # createProject(projectName, projectDescription): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
