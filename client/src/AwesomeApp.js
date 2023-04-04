@@ -93,11 +93,14 @@ function AwesomeApp(){
             return fetch(`/login/<${username}>/<${password}>`)
                 .then(response => response.json())
                 .then(data => {
-                    setLoginMessage(data);
-                    setLoginLabel('Logged In');
-                    setLoginStatus(true);
+                    if( data == 'Fail'){
+                        window.alert('Your username or password is incorrect. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                    }
                 })
-                // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
                 .catch(error => window.alert('Your username or password is incorrect. Please try again.'));
         }
 
@@ -105,10 +108,14 @@ function AwesomeApp(){
             return fetch(`/Users_db/createUser/<${username}>/<${password}>`)
                 .then(response => response.json())
                 .then(data => {
-                    setLoginMessage(data);
-                    setLoginLabel('Logged In');
-                    setLoginStatus(true);
-                    window.alert("You've created a new account.");
+                    if ( data == 'Fail'){
+                        window.alert('Failed to create an account. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                        window.alert("You've created a new account.");
+                    }
                 })
                 // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
                 .catch(error => window.alert('Failed to create an account. Please try again.'));
