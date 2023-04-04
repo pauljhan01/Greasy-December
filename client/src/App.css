@@ -83,7 +83,7 @@ input {
   color: #330033;
   border-style: solid;
   border-color: #61dafb;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   margin-left: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -134,7 +134,17 @@ input {
   display: inline-flex;
   justify-content: space-between;
   gap: 15px;
+  font-size: large;
+}
 
+.projBlock {
+  margin-top: 25px;
+}
+.projList {
+  display: inline-flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: larger;
 }
 
 .hardwareSetR {

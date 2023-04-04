@@ -92,56 +92,116 @@ function AwesomeApp(){
         function fetchLogin() {
             return fetch(`/login/<${username}>/<${password}>`)
                 .then(response => response.json())
-                .then(data => setLoginMessage(data))
+                .then(data => {
+                    if( data == 'Fail'){
+                        window.alert('Your username or password is incorrect. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                    }
+                })
+                .catch(error => window.alert('Your username or password is incorrect. Please try again.'));
+        }
+
+        function fetchCreateAccount() {
+            return fetch(`/Users_db/createUser/<${username}>/<${password}>`)
+                .then(response => response.json())
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert('Failed to create an account. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                        window.alert("You've created a new account.");
+                    }
+                })
                 // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
-                .catch(error => window.alert(error));
+                .catch(error => window.alert('Failed to create an account. Please try again.'));
         }
 
         //create project hooks
         function fetchCreateProject() {
-            return fetch(`projects/createProject/<${id}>/<${projectDescription}>`)
+            return fetch(`projects/createProject/<${projectName}>/<${projectDescription}>`)
                 .then(response => response.json())
-                .then(data => setCreateProjectMessage(data))
-                // .then(data => fetchShowProjects())
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`);
+                    } else {
+                        setCreateProjectMessage(data);
+                        window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`);
+                    }
+                })
+                .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
 
         //join project hook
         function fetchJoin() {
-            return fetch(`projects/joinByID/<${id}>/<${username}>`)
+            return fetch(`/projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setJoinMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to join Project ${id}. Please try again.`);
+                    } else {
+                        setJoinMessage(data);
+                        window.alert(`You have joined Project: ${id}`);
+                    }
+                })
+                .catch(error => window.alert(`Failed to join Project ${id}. Please try again.`));
         }
 
         //leave project hook
         function fetchLeave(){
-            return fetch(`projects/leaveByID/<${id}>/<${username}>`)
+            return fetch(`/projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setLeaveMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if(data == 'Fail') {
+                        window.alert(`Leave project failed, please try again.`);
+                    } else {
+                        setLeaveMessage(data);
+                        window.alert(`You have left Project: ${id}`);
+                    }
+                })
+                .catch(error => window.alert('Leave project failed, please try again.'));
         }
 
         //show projects hooks
         function fetchShowProjects(){
-            return fetch(`/projects/<${username}>`)
+            return fetch(`/projects`)
                 .then(response => response.json())
                 .then(data => setGetProjects(data))
-                .catch(error => window.alert(error))
+                .catch(error => window.alert("Get Project List Failed."))
         }
+
+
+        //Check Out Hardware
+        function fetchCheckOut(hwsetID, amount){
+            return fetch(`/HWSets/checkOut/${hwsetID}/${id}/${amount}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("System: Check Out Failed. Please try again.")}
+                })
+                .catch(error => window.alert("System: Check Out Failed. Please try again."))
+        }
+
+        //Check In Hardware
+        function fetchCheckIn(hwsetID, amount){
+            return fetch(`/HWSets/checkIn/${hwsetID}/${id}/${amount}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("System: Check In Failed. Please try again.")}
+                })
+                .catch(error => window.alert("System: Check In Failed. Please try again."))
+        }
+
 
         // *** CONDITIONALS ***
         if(login) {
             fetchLogin();
-            if(loginMessage === 'Fail'){
-                window.alert('Your username or password is incorrect. Please try again.')
-                setLogin(false)
-            }
-            else{
-               setLogin(false) 
-               setLoginLabel('Logged In');
-               setLoginStatus(true);
-            }
+            setLogin(false) ;
         }
         if(logout){
             setLogout(false);
@@ -150,11 +210,7 @@ function AwesomeApp(){
             setUsername('');
         }
         if(createAccount) {
-            window.alert("Created New Account.")
-            fetchLogin();
-            setLogin(false);
-            setLoginLabel('Logged In');
-            setLoginStatus(true);
+            fetchCreateAccount();
             setCreateAccount(false);
         }
         if(loginStatus) {
@@ -162,47 +218,22 @@ function AwesomeApp(){
         }
         if(createProject){
             fetchCreateProject();
-            if(createProjectMessage === 'Fail'){
-                window.alert(`Project ${projectName} either already exists or there are max number of projects.`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
-                fetchShowProjects();
-            }
-            else{
-                window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
-                fetchShowProjects();                 
-            }
-            
+            setProjectName('');
+            setProjectDescription('');
+            setCreateProject(false)
+            fetchShowProjects();
         }
         if(joinClicked){
             fetchJoin();
-            if(joinMessage === `Fail`){
-                window.alert(`Failed to join Project ${id}. Please try again.`)
-                setJoinClicked(false)
-            }
-            else{
-                window.alert(`You have joined Project: ${id}`)
-                setJoinClicked(false);
-                setId('');
-                fetchShowProjects();
-            }
+            setJoinClicked(false);
+            setId('');
+            fetchShowProjects();
         }
         if(leaveProject){
             fetchLeave();
-            if(leaveMessage === 'Fail'){
-                window.alert('Leaving project failed. Please try again')
-                setLeaveProject(false)
-            }
-            else{
-                window.alert(`You have left Project: ${id}`)
-                setLeaveProject(false);
-                setId('');
-                fetchShowProjects();
-            }  
+            setLeaveProject(false);
+            setId('');
+            fetchShowProjects();
         }
         if(checkin1){
             setCheckin1(false);
@@ -210,38 +241,18 @@ function AwesomeApp(){
             const newAmt = avail1 + qty1;
 
             if(newAmt > cap1){
-                fetch(`HWSets/checkIn/${id}/HWSet1/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                   data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet1 failed. Please try again')
-                )
-                //if backend sends us failure, alert user
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`),
+                fetchCheckIn(1, avail1);
+                if (checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`);
                     setQty1(0)
                     setAvail1(newAmt)
                 }
             }
             else {
-                fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
-                   response => response.json() 
-                ).then(
-                    data => setCheckinMessage(data)
-                ).
-                catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet1 failed. Please try again.`) 
-                )
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
+                fetchCheckIn(1, qty1);
+                if ( checkinMessage == 'Fail' ) {}
+                else {
                     window.alert(`You have checked in ${qty1} units into HWSet1`)
                     setQty1(0)
                     setAvail1(newAmt)
@@ -250,42 +261,23 @@ function AwesomeApp(){
         }
         if(checkout1){
             setCheckout1(false);
-
             const newAmt = avail1 - qty1;
 
             if(qty1 > avail1){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                }
-                else{
-                    window.alert(`You are attempting to check out too many units! ${avail0} units from HWSet1 were checked out`)
-                    setQty1(0)
-                    setAvail1(0) 
+                fetchCheckOut(1, avail1);
+                if(checkoutMessage == 'Fail') {}
+                else {
+                    window.alert(`You attempted to check out too many units! ${avail1} units from HWSet1 were checked out`);
+                    setQty1(0);
+                    setAvail1(0);
                 }
             }
             else {
-                fetch(`HWSets/checkOut/${id}/HWSet1/${qty1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                }
+                fetchCheckOut(1, qty1);
+                if(checkoutMessage == 'Fail'){}
                 else{
-                    window.alert(`You have checked out ${qty1} units from HWSet1`),
-                    setQty1(0),
+                    window.alert(`You have checked out ${qty1} units from HWSet1`)
+                    setQty1(0)
                     setAvail1(newAmt)
                 }
             }
@@ -296,41 +288,22 @@ function AwesomeApp(){
             const newAmt = avail2 + qty2;
 
             if(newAmt > cap2){
-                fetch(`HWSets/checkIn/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)  
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet2 failed. Please try again.')
-                )
-                if(checkinMessage ===  `Fail`){
-                    window.alert('Checking into HWSet2 failed. Please try again.')
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`),
-                    setQty2(0),
-                    setAvail2(cap2)
+                fetchCheckIn(2, avail2);
+                if (checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet1 were not checked in`);
+                    setQty2(0)
+                    setAvail2(newAmt)
                 }
             }
             else {
-                fetch(`HWSets/checkIn/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
-                )
-                if(checkinMessage === `Fail`){
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
+                fetchCheckIn(2, qty2);
+                if ( checkinMessage == 'Fail' ) {}
+                else {
+                    window.alert(`You have checked in ${qty2} units into HWSet1`)
+                    setQty2(0)
+                    setAvail2(newAmt)
                 }
-                else{
-                    window.alert(`You have checked in ${qty2} units from HWSet2.`);
-                    setQty2(0);
-                    setAvail2(newAmt);
-                }
-               
             }
         }
         if(checkout2){
@@ -339,46 +312,22 @@ function AwesomeApp(){
             const newAmt = avail2 - qty2;
 
             if(qty2 > avail2){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                }
-                else{
+                fetchCheckOut(2, avail2);
+                if(checkoutMessage == 'Fail'){}
+                else {
                     window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
                     setQty2(0);
                     setAvail2(0);
                 }
-                // window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
-                // setQty2(0);
-                // setAvail2(0);
             }
             else {
-                fetch(`HWSets/checkOut/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert("Checking out from HWSet2 failed. Please try again.")
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert("Checking out from HWSet2 failed. Please try again.")  
-                }
-                else{
+                fetchCheckOut(2, avail2)
+                if(checkoutMessage == 'Fail'){}
+                else {
                     window.alert(`You have checked out ${qty2} units from HWSet2.`);
                     setQty2(0);
                     setAvail2(newAmt);
                 }
-                // window.alert(`You have checked out ${qty2} units from HWSet2.`);
-                // setQty2(0);
-                // setAvail2(newAmt);
             }
         }
 
@@ -454,30 +403,23 @@ function AwesomeApp(){
                     <div className={"collection"}>
                         <h1>Your Active Projects</h1>
                         <div className={"doc"}>
-                            {getProjects.map((project) => (
-                                <div key={project.id}>
+
+                            {Object.keys(getProjects).map((key) => (
+                                <div className={"projBlock"}>
                                     <div className={"doc"}>
-                                         <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
-                                        <div className={"hardwareSet"}>
-                                            <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
+                                        <div>
+                                            <h2>Project Name: {getProjects[key][0]}</h2>
+                                            <strong>Project ID:</strong> {key}
                                         </div>
-                                        <span className={"hardwareSet"}>
-                                            <span><strong>HWSet1</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet1CheckedOut} </span>
-                                        </span>
-                                         <span className={"hardwareSet"}>
-                                            <span><strong>HWSet2</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet2CheckedOut} </span>
-                                        </span>
-                                     </div>
+                                        <div className={"projList"}>
+                                            <strong>Description: </strong> {getProjects[key][1]}
+                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                        </div>
+                                    </div>
                                 </div>
-                             ))}
-                            {getProjects && (
-                                <div>
-                                  <p>Response data:</p>
-                                  <pre>{JSON.stringify(getProjects, null, 2)}</pre>
-                                </div>
-                            )}
+
+                            ))}
+
                         </div>
                     </div>
 

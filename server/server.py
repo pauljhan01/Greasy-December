@@ -20,6 +20,12 @@ def index():
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/Users_db/createUser/<userName>/<password>')
 def createUser(userName, password):
+
+    # ----------- TESTED ----------
+    # return jsonify('Success')
+    # return jsonify('Fail')
+    # --------- END TESTED --------
+
     client = pymongo.MongoClient(clientString)
     Users_db = client["Users_db"]
     Users_collection = Users_db.get_collection("Users_collection");
@@ -46,6 +52,12 @@ def createUser(userName, password):
 #   Outputs: String -> 'Success' or 'Fail'
 @app.route('/login/<userName>/<password>')
 def login(userName, password):
+
+    # ----------- TESTED ----------
+    # return jsonify('Success')
+    # return jsonify('Fail')
+    # -------- END TESTED ---------
+
     client = pymongo.MongoClient(clientString)
     Users_db = client["Users_db"]
     Users_collection = Users_db.get_collection("Users_collection");
@@ -75,6 +87,14 @@ def login(userName, password):
 #   Outputs: Dictionary(Map) -> Key: Project ID, Value: [name, Description, CheckedOut]
 @app.route('/projects')
 def projects():
+
+    # ----------- TESTED ----------
+    # Projects_dict = {}
+    # Projects_dict[0] = ['newProj', 'projDescription', 15]
+    # Projects_dict[1] = ['another project', 'another description', 34]
+    # return jsonify(Projects_dict)
+    # -------- END TESTED ----------
+
     client = pymongo.MongoClient(clientString)
 
     Projects_db = client["Projects_db"]
@@ -92,12 +112,19 @@ def projects():
     client.close()
     return Projects_dict
 
+
 # createProject(projectName, projectDescription): Creates New project document in Projects_db
 #   Inputs: <projectName> -> String: name of project
 #           <projectDescription> -> String: Description of project
 #   Outputs: String -> 'Success" or 'Fail'
 @app.route('/projects/createProject/<projectName>/<projectDescription>')
 def createProject(projectName, projectDescription):
+
+    # ----------- TESTED ----------
+    # return jsonify('Success')
+    # return jsonify('Fail')
+    # -------- END TESTED ----------
+
     minID = 1000
     maxID = 9999
     client = pymongo.MongoClient(clientString)
@@ -259,6 +286,12 @@ def projects_getByName(projectName):
 #                    "Success" if project exists
 @app.route('/projects/joinByID/<projectID>/<userName>')
 def projects_joinByID(projectID, userName):
+
+    # ----------- TESTED ----------
+    # return jsonify('Success')
+    # return jsonify('Fail')
+    # ------- END TESTED ----------
+
     client = pymongo.MongoClient(clientString)
     encryptedInputUsername = hashlib.sha256(userName.encode())
     encryptedInputUsername = encryptedInputUsername.hexdigest()
@@ -287,6 +320,12 @@ def projects_joinByID(projectID, userName):
 #                    "Success"
 @app.route('/projects/leaveByID/<projectID>/<userName>')
 def projects_leaveByID(projectID, userName):
+
+    # ----------- TESTED ----------
+    # return jsonify('Success')
+    # return jsonify('Fail')
+    # ------- END TESTED ----------
+
     client = pymongo.MongoClient(clientString)
     encryptedInputUsername = hashlib.sha256(userName.encode())
     encryptedInputUsername = encryptedInputUsername.hexdigest()
