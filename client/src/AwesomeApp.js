@@ -138,10 +138,17 @@ function AwesomeApp(){
 
         //leave project hook
         function fetchLeave(){
-            return fetch(`projects/leaveByID/<${id}>/<${username}>`)
+            return fetch(`/projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setLeaveMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if(data == 'Fail') {
+                        window.alert(`Leave project failed, please try again.`);
+                    } else {
+                        setLeaveMessage(data);
+                        window.alert(`You have left Project: ${id}`);
+                    }
+                })
+                .catch(error => window.alert('Leave project failed, please try again.'));
         }
 
         //show projects hooks
@@ -185,16 +192,9 @@ function AwesomeApp(){
         }
         if(leaveProject){
             fetchLeave();
-            if(leaveMessage === 'Fail'){
-                window.alert('Leaving project failed. Please try again')
-                setLeaveProject(false)
-            }
-            else{
-                window.alert(`You have left Project: ${id}`)
-                setLeaveProject(false);
-                setId('');
-                fetchShowProjects();
-            }  
+            setLeaveProject(false);
+            setId('');
+            fetchShowProjects();
         }
         if(checkin1){
             setCheckin1(false);

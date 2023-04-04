@@ -291,26 +291,27 @@ def projects_joinByID(projectID, userName):
 #                    "Success"
 @app.route('/projects/leaveByID/<projectID>/<userName>')
 def projects_leaveByID(projectID, userName):
-    client = pymongo.MongoClient(clientString)
-    encryptedInputUsername = hashlib.sha256(userName.encode())
-    encryptedInputUsername = encryptedInputUsername.hexdigest()
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": projectID})
-
-    if Projects_Document == None:
-        client.close()
-        return jsonify('Fail')
-
-    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
-    if Projects_Document_ApprovedList.count(encryptedInputUsername) > 0:
-        Projects_Document_ApprovedList.remove(encryptedInputUsername)
-        Projects_collection.update_one({"ID": projectID},
-                                 {"$set": {"ApprovedUsers": Projects_Document_ApprovedList}})
-
-
-    client.close()
-    return jsonify("Success")
+    return jsonify('Fail')
+    # client = pymongo.MongoClient(clientString)
+    # encryptedInputUsername = hashlib.sha256(userName.encode())
+    # encryptedInputUsername = encryptedInputUsername.hexdigest()
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # Projects_Document = Projects_collection.find_one({"ID": projectID})
+    #
+    # if Projects_Document == None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    # if Projects_Document_ApprovedList.count(encryptedInputUsername) > 0:
+    #     Projects_Document_ApprovedList.remove(encryptedInputUsername)
+    #     Projects_collection.update_one({"ID": projectID},
+    #                              {"$set": {"ApprovedUsers": Projects_Document_ApprovedList}})
+    #
+    #
+    # client.close()
+    # return jsonify("Success")
 
 #------ HW_db functions --------------------------------------------------------------------------------------------------------
 
