@@ -412,6 +412,77 @@ def HWSets_checkIn(IDHWSet, IDProject, quantity):
     client.close()
     return jsonify("Success")
 
+# checkIn(): checks in HW back into its HWSet
+#   Input: <IDHWSet> -> String: ID of HWSet
+#          <IDProject> -> String: ID of Project
+#          <quantity> -> Int: HW to be checked out
+#   Output:  String -> 'Success' or 'Fail'
+@app.route('/HWSets/checkInV2/<IDHWSet>/<IDProject>/<quantity>/<userName>')
+def HWSets_checkInV2(IDHWSet, IDProject, quantity, userName):
+    #TODO
+    quantity = int(quantity)
+    client = pymongo.MongoClient(clientString)
+
+    # get project
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    encryptedInputUsername = hashlib.sha256(userName.encode())
+    encryptedInputUsername = encryptedInputUsername.hexdigest()
+    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    if Projects_Document_ApprovedList.count(encryptedInputUsername) == 0:
+        client.close()
+        return jsonify('Fail')
+
+
+    # get checkedout map
+    Projects_checkedOut = dict(Projects_Document.get("CheckedOut"))
+
+    # if quantity <= IDHWSet/quantity
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_Document = HW_collection.find_one({"ID": IDHWSet})
+
+    if HW_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    #if map(IDHWSet, qty) -> qty >= quantity
+    HW_avail = HW_Document.get("Availability")
+    qtyCheckedOut = Projects_checkedOut.get(IDHWSet)
+
+    if qtyCheckedOut == None:
+        client.close()
+        return jsonify("Fail")
+
+    if qtyCheckedOut >= quantity:
+        HW_collection.update_one({"ID": IDHWSet},
+                                 {"$set": {"Availability": int(HW_avail) + quantity}})
+
+        if Projects_checkedOut.get(IDHWSet) == None:
+            Projects_checkedOut[IDHWSet] = quantity
+        else:
+            Projects_checkedOut[IDHWSet] -= quantity
+
+        Projects_collection.update_one({"ID": IDProject},
+                                 {"$set": { "CheckedOut": Projects_checkedOut}})
+        #then they can check in
+        #update checkedout map for IDHWSet
+    #else
+    else:
+        client.close()
+        return jsonify("Fail")
+        #do they check in up to how much they have checked out?
+        #what gets returned
+
+    client.close()
+    return jsonify("Success")
+
 # checkOut(): checks out HW from a HWSet
 #   Input: <IDHWSet> -> String: ID of HWSet
 #          <IDProject> -> String: ID of Project
@@ -428,6 +499,63 @@ def HWSets_checkOut(IDHWSet, IDProject, quantity):
     Projects_Document = Projects_collection.find_one({"ID": IDProject})
 
     if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    # get checkedout map
+    Projects_checkedOut = dict(Projects_Document.get("CheckedOut"))
+
+    # if quantity <= IDHWSet/quantity
+    HW_db = client["HW_db"]
+    HW_collection = HW_db.get_collection("HW_collection")
+    HW_Document = HW_collection.find_one({"ID": IDHWSet})
+
+    if HW_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    HW_avail = HW_Document.get("Availability")
+    if int(HW_avail) >= quantity:
+        HW_collection.update_one({"ID": IDHWSet},
+                                 {"$set": { "Availability": int(HW_avail) - quantity}})
+
+        if Projects_checkedOut.get(IDHWSet) == None:
+            Projects_checkedOut[IDHWSet] = quantity
+        else:
+            Projects_checkedOut[IDHWSet] += quantity
+
+        Projects_collection.update_one({"ID": IDProject},
+                                 {"$set": { "CheckedOut": Projects_checkedOut}})
+
+        # then they can check out
+        # update checkedout map for IDHWSet
+    # else
+    else:
+        client.close()
+        return jsonify("Fail")
+    # do they check out up to max?
+    # what gets returned
+    client.close()
+    return jsonify("Success")
+
+@app.route('/HWSets/checkOutV2/<IDHWSet>/<IDProject>/<quantity>/<userName>')
+def HWSets_checkOutV2(IDHWSet, IDProject, quantity, userName):
+    quantity = int(quantity)
+    client = pymongo.MongoClient(clientString)
+
+    # get project
+    Projects_db = client["Projects_db"]
+    Projects_collection = Projects_db.get_collection("Projects_collection")
+    Projects_Document = Projects_collection.find_one({"ID": IDProject})
+
+    if Projects_Document == None:
+        client.close()
+        return jsonify('Fail')
+
+    encryptedInputUsername = hashlib.sha256(userName.encode())
+    encryptedInputUsername = encryptedInputUsername.hexdigest()
+    Projects_Document_ApprovedList = list(Projects_Document.get("ApprovedUsers"))
+    if Projects_Document_ApprovedList.count(encryptedInputUsername) == 0:
         client.close()
         return jsonify('Fail')
 
