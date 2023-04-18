@@ -69,20 +69,15 @@ function AwesomeApp(){
 
         //Project Doc variables
         const [joined, setJoined] = useState(true);
-        const [qty1, setQty1] = useState(0);
-        const [qty2, setQty2] = useState(0);
+        const [qty, setQty] = useState('');
 
-        //Hardware set 1 variables
-        const [avail1, setAvail1] = useState(200);
-        const [cap1, setCap1] = useState(200);
-        const [checkin1, setCheckin1] = useState(false);
-        const [checkout1, setCheckout1] = useState(false);
+        //Hardware management section
+        const [hwprojID, setHWprojID] = useState('');
+        const [hwData, setHWData] = useState([]);
+        const [hwSetID, setHWSetID] = useState('');
+        const [checkin, setCheckin] = useState(false);
+        const [checkout, setCheckout] = useState(false);
 
-        //Hardware set 2 variables
-        const [avail2, setAvail2] = useState(200);
-        const [cap2, setCap2] = useState(200);
-        const [checkin2, setCheckin2] = useState(false);
-        const [checkout2, setCheckout2] = useState(false);
 
     useEffect(() => {
 
@@ -92,115 +87,176 @@ function AwesomeApp(){
         function fetchLogin() {
             return fetch(`/login/<${username}>/<${password}>`)
                 .then(response => response.json())
-                .then(data => setLoginMessage(data))
+                .then(data => {
+                    if( data == 'Fail'){
+                        window.alert('Your username or password is incorrect. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                    }
+                })
+                .catch(error => window.alert('Your username or password is incorrect. Please try again.'));
+        }
+
+        function fetchCreateAccount() {
+            return fetch(`/Users_db/createUser/<${username}>/<${password}>`)
+                .then(response => response.json())
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert('Failed to create an account. Please try again.');
+                    } else {
+                        setLoginMessage(data);
+                        setLoginLabel('Logged In');
+                        setLoginStatus(true);
+                        window.alert("You've created a new account.");
+                    }
+                })
                 // .then(data => window.alert(`This would be a Flask Call sending: ${textFieldValue} as the user.`))
-                .catch(error => window.alert(error));
+                .catch(error => window.alert('Failed to create an account. Please try again.'));
         }
 
         //create project hooks
         function fetchCreateProject() {
-            return fetch(`projects/createProject/<${id}>/<${projectDescription}>`)
+            return fetch(`projects/createProject/<${projectName}>/<${projectDescription}>`)
                 .then(response => response.json())
-                .then(data => setCreateProjectMessage(data))
-                // .then(data => fetchShowProjects())
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`);
+                    } else {
+                        setCreateProjectMessage(data);
+                        window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`);
+                    }
+                })
+                .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
 
         //join project hook
         function fetchJoin() {
-            return fetch(`projects/joinByID/<${id}>/<${username}>`)
+            return fetch(`/projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setJoinMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if ( data == 'Fail'){
+                        window.alert(`Failed to join Project ${id}. Please try again.`);
+                    } else {
+                        setJoinMessage(data);
+                        window.alert(`You have joined Project: ${id}`);
+                    }
+                })
+                .catch(error => window.alert(`Failed to join Project ${id}. Please try again.`));
         }
 
         //leave project hook
         function fetchLeave(){
-            return fetch(`projects/leaveByID/<${id}>/<${username}>`)
+            return fetch(`/projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
-                .then(data => setLeaveMessage(data))
-                .catch(error => window.alert(error));
+                .then(data => {
+                    if(data == 'Fail') {
+                        window.alert(`You failed to leave project ${id}, please try again.`);
+                    } else {
+                        setLeaveMessage(data);
+                        window.alert(`You have left Project: ${id}`);
+                    }
+                })
+                .catch(error => window.alert('Leave project failed, please try again.'));
         }
 
         //show projects hooks
         function fetchShowProjects(){
-            return fetch(`/projects/<${username}>`)
+            return fetch(`/projects`)
                 .then(response => response.json())
                 .then(data => setGetProjects(data))
-                .catch(error => window.alert(error))
+                .catch(error => window.alert("Get Project List Failed."))
+        }
+
+
+        //Check Out Hardware
+        function fetchCheckOut(hwsetID, amount){
+            return fetch(`/HWSets/checkOutV2/${hwsetID}/${hwprojID}/${amount}/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("Check Out Failed. Please try again.")}
+                    else window.alert(`You have checked out ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}.`)
+                })
+                .catch(error => window.alert("System: Check Out Failed. Please try again."))
+        }
+
+        //Check In Hardware
+        function fetchCheckIn(hwsetID, amount){
+            return fetch(`/HWSets/checkInV2/${hwsetID}/${hwprojID}/${amount}/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    setGetProjects(data)
+                    if( data == 'Fail' ) { window.alert("Check In Failed. Please try again.")}
+                    else window.alert(`You have checked in ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}`)
+                })
+                .catch(error => window.alert("System: Check In Failed. Please try again."))
+        }
+
+        function fetchHWSets(){
+            return fetch(`/HWSets`)
+                .then(response => response.json())
+                .then(data => {
+                    setHWData(data)
+                })
+                .catch(error => window.alert("System: Failed to retrieve hardware set data."))
         }
 
         // *** CONDITIONALS ***
         if(login) {
-            fetchLogin();
-            if(loginMessage === 'Fail'){
-                window.alert('Your username or password is incorrect. Please try again.')
-                setLogin(false)
+            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            else {
+                fetchLogin();
+                fetchHWSets();
             }
-            else{
-               setLogin(false) 
-               setLoginLabel('Logged In');
-               setLoginStatus(true);
-            }
+            setLogin(false) ;
         }
         if(logout){
             setLogout(false);
             setLoginLabel('Log In');
             setLoginStatus(false);
             setUsername('');
+            setPassword('');
         }
         if(createAccount) {
-            window.alert("Created New Account.")
-            fetchLogin();
-            setLogin(false);
-            setLoginLabel('Logged In');
-            setLoginStatus(true);
+            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            else {
+                fetchCreateAccount();
+            }
+
+            setUsername('');
+            setPassword('');
             setCreateAccount(false);
         }
         if(loginStatus) {
             fetchShowProjects();
         }
         if(createProject){
-            fetchCreateProject();
-            if(createProjectMessage === 'Fail'){
-                window.alert(`Project ${projectName} either already exists or there are max number of projects.`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
+            if(projectName == '' || projectDescription == '') window.alert("Please enter a project name and description.")
+            else {
+                fetchCreateProject();
                 fetchShowProjects();
             }
-            else{
-                window.alert(`You have created Project: ${projectName} with Description: ${projectDescription}`)
-                setProjectName('');
-                setProjectDescription('');
-                setCreateProject(false)
-                fetchShowProjects();                 
-            }
-            
+
+            setProjectName('');
+            setProjectDescription('');
+            setCreateProject(false)
+
         }
         if(joinClicked){
-            fetchJoin();
-            if(joinMessage === `Fail`){
-                window.alert(`Failed to join Project ${id}. Please try again.`)
-                setJoinClicked(false)
-            }
-            else{
-                window.alert(`You have joined Project: ${id}`)
-                setJoinClicked(false);
-                setId('');
+            if(id == '') window.alert("Please enter a Project Id.")
+            else {
+                fetchJoin();
                 fetchShowProjects();
             }
+            setJoinClicked(false);
+            setId('');
         }
         if(leaveProject){
-            fetchLeave();
-            if(leaveMessage === 'Fail'){
-                window.alert('Leaving project failed. Please try again')
-                setLeaveProject(false)
-            }
-            else{
-                window.alert(`You have left Project: ${id}`)
-                setLeaveProject(false);
-                setId('');
+            if (id == '') window.alert(("Please enter a Project Id."))
+            else {
+                fetchLeave();
                 fetchShowProjects();
             }  
         }
@@ -248,8 +304,8 @@ function AwesomeApp(){
                 }
             }
         }
-        if(checkout1){
-            setCheckout1(false);
+        if(checkin){
+            setCheckin(false);
 
             const newAmt = avail1 - qty1;
 
@@ -290,8 +346,8 @@ function AwesomeApp(){
                 }
             }
         }
-        if(checkin2){
-            setCheckin2(false);
+        if(checkout){
+            setCheckout(false);
 
             const newAmt = avail2 + qty2;
 
@@ -338,51 +394,10 @@ function AwesomeApp(){
 
             const newAmt = avail2 - qty2;
 
-            if(qty2 > avail2){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert(`Checking out from HWSet2 failed. Please try again.`)
-                }
-                else{
-                    window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
-                    setQty2(0);
-                    setAvail2(0);
-                }
-                // window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
-                // setQty2(0);
-                // setAvail2(0);
-            }
-            else {
-                fetch(`HWSets/checkOut/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert("Checking out from HWSet2 failed. Please try again.")
-                )
-                if(checkoutMessage === `Fail`){
-                    window.alert("Checking out from HWSet2 failed. Please try again.")  
-                }
-                else{
-                    window.alert(`You have checked out ${qty2} units from HWSet2.`);
-                    setQty2(0);
-                    setAvail2(newAmt);
-                }
-                // window.alert(`You have checked out ${qty2} units from HWSet2.`);
-                // setQty2(0);
-                // setAvail2(newAmt);
-            }
         }
 
-    },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, checkin1, checkin2, checkout1, checkout2]);
+
+    },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, hwprojID, checkin, checkout]);
 
     return (
         <div className={"App"}>
@@ -400,7 +415,7 @@ function AwesomeApp(){
                 ):(
                     <div className={"login"}>
                         <span><TextField value={username} onChange={(e) => setUsername(e.target.value)} id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
-                        <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
+                        <span><TextField value={password} onChange={ (e) => setPassword(e.target.value)} id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
                         <span><Button onClick={() => setLogin(true)} variant="contained" size={'small'}>Log In</Button></span>
                         <span>or</span>
                         <span><Button onClick={() => setCreateAccount(true)} variant="contained" size={'small'}>Create Account</Button></span>
@@ -424,7 +439,7 @@ function AwesomeApp(){
 
                     {/*Project Management Section*/}
                     <div className={"collection"}>
-                        <h1>Projects</h1>
+                        <h1>Join or Leave a Project</h1>
                         <div className={"doc"}>
                             <h2>Please Enter the Project ID</h2>
                             <span className={"hardwareSetR"}>
@@ -432,52 +447,58 @@ function AwesomeApp(){
                                 <span><Button variant="contained" size={'small'} onClick={() => setJoinClicked(true)}>Join</Button></span>
                                 <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
                             </span>
-
-                            <span className={"hardwareSet"}>
-                                <span><strong>HWSet1</strong> </span>
-                                <span><strong>Availability: </strong> {avail1} / {cap1} </span>
-                                <span><TextField value={qty1} onChange={(e)=> setQty1(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                            </span>
-                             <span className={"hardwareSet"}>
-                                <span><strong>HWSet2</strong> </span>
-                                <span><strong>Availability: </strong> {avail2} / {cap2} </span>
-                                <span><TextField value={qty2} onChange={(e)=> setQty2(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                            </span>
                          </div>
+                    </div>
+
+                    {/*Hardware Management Section*/}
+                    <div className={"collection"}>
+                        <h1>Check In/Out Hardware</h1>
+                        <div className={"doc"}>
+                            <div>
+                                <h2>Project ID</h2>
+                                <TextField value={hwprojID} onChange={(e)=> setHWprojID(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} />
+                            </div>
+                        <div>
+                            <h2>Hardware Set Info</h2>
+
+                            <div className={"doc"}>
+                                {Object.keys(hwData).map((key) => (
+                                    <div>
+                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][0]} / Capacity {hwData[key][1]}
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={"hardwareSet"}>
+                                <TextField value={hwSetID} onChange={(e)=> setHWSetID(e.target.value)} id="outlined-basic" label="Hardware Set ID" variant="outlined" size={'small'} />
+                                <span><TextField value={qty} onChange={(e)=> setQty(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                                <span><Button onClick={() => setCheckin(true)} variant="contained" size={'small'}>Check In</Button></span>
+                                <span><Button onClick={() => setCheckout(true)} variant="contained" size={'small'}>Check Out</Button></span>
+                            </div>
+                        </div>
+                        </div>
                     </div>
 
                     {/*Users Lists of Projects Section*/}
                     <div className={"collection"}>
-                        <h1>Your Active Projects</h1>
+                        <h1>Project List</h1>
                         <div className={"doc"}>
-                            {getProjects.map((project) => (
-                                <div key={project.id}>
+
+                            {Object.keys(getProjects).map((key) => (
+                                <div className={"projBlock"}>
                                     <div className={"doc"}>
-                                         <h2><strong>Project: {project.name}  ID: {id} </strong></h2>
-                                        <div className={"hardwareSet"}>
-                                            <strong>Users:</strong> {username} <strong>Description:</strong> {project.description}
+                                        <div>
+                                            <h2>Project Name: {getProjects[key][0]}</h2>
+                                            <strong>Project ID:</strong> {key}
                                         </div>
-                                        <span className={"hardwareSet"}>
-                                            <span><strong>HWSet1</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet1CheckedOut} </span>
-                                        </span>
-                                         <span className={"hardwareSet"}>
-                                            <span><strong>HWSet2</strong> </span>
-                                            <span>Checked Out: {project.hardwareSet2CheckedOut} </span>
-                                        </span>
-                                     </div>
+                                        <div className={"projList"}>
+                                            <strong>Description: </strong> {getProjects[key][1]}
+                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                        </div>
+                                    </div>
                                 </div>
-                             ))}
-                            {getProjects && (
-                                <div>
-                                  <p>Response data:</p>
-                                  <pre>{JSON.stringify(getProjects, null, 2)}</pre>
-                                </div>
-                            )}
+
+                            ))}
+
                         </div>
                     </div>
 
