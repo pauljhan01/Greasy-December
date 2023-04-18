@@ -223,7 +223,7 @@ function AwesomeApp(){
                     window.alert("Checking into HWSet1 failed. Please try again.")
                 }
                 else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`),
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`)
                     setQty1(0)
                     setAvail1(newAmt)
                 }
@@ -266,7 +266,7 @@ function AwesomeApp(){
                     window.alert(`Checking out of HWSet1 failed. Please try again.`)
                 }
                 else{
-                    window.alert(`You are attempting to check out too many units! ${avail0} units from HWSet1 were checked out`)
+                    window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
                     setQty1(0)
                     setAvail1(0) 
                 }
@@ -284,8 +284,8 @@ function AwesomeApp(){
                     window.alert('Checking out from HWSet1 failed. Please try again.')
                 }
                 else{
-                    window.alert(`You have checked out ${qty1} units from HWSet1`),
-                    setQty1(0),
+                    window.alert(`You have checked out ${qty1} units from HWSet1`)
+                    setQty1(0)
                     setAvail1(newAmt)
                 }
             }
@@ -308,8 +308,8 @@ function AwesomeApp(){
                     window.alert('Checking into HWSet2 failed. Please try again.')
                 }
                 else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`),
-                    setQty2(0),
+                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`)
+                    setQty2(0)
                     setAvail2(cap2)
                 }
             }
