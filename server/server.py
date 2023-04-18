@@ -24,14 +24,15 @@ def createUser(userName, password):
     Users_db = client["Users_db"]
     Users_collection = Users_db.get_collection("Users_collection");
 
-    Users_Document = Users_collection.find_one({"userID": str(userName)})
+    encryptedUserName = hashlib.sha256(userName.encode())
+    encryptedPassword = hashlib.sha256(password.encode())
+
+    Users_Document = Users_collection.find_one({"userID": str(encryptedUserName.hexdigest())})
     #user already exists
     if Users_Document != None:
         client.close()
         return jsonify('Fail')
 
-    encryptedUserName = hashlib.sha256(userName.encode())
-    encryptedPassword = hashlib.sha256(password.encode())
     Users_collection.insert_one({
         "userID": encryptedUserName.hexdigest(),
         "userPassword": encryptedPassword.hexdigest(),
