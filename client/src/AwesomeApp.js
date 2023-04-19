@@ -57,17 +57,20 @@ function AwesomeApp(){
     const [id, setId] = useState('');
 
     const [projLog, setProjLog] = useState([]);
+    const [projLog2, setProjLog2] = useState([]);
 
         //create project variables
         const [projectName, setProjectName] = useState('');
         const [projectDescription, setProjectDescription] = useState('');
         const [createProject, setCreateProject] = useState(false);
+        const [createdProject, setCreatedProject] = useState(false);
 
         // join project variables
         const [joinClicked, setJoinClicked] = useState(false);
 
         // leave project variables
         const [leaveProject, setLeaveProject] = useState(false);
+        const [leftProj, setLeftProj] = useState(false);
 
         //Project Doc variables
         const [joined, setJoined] = useState(true);
@@ -137,6 +140,14 @@ function AwesomeApp(){
             return fetch(`/projects/getByName/<${name}>`)
                 .then(response => response.json())
                 .then(data => setProjLog(data))
+                .catch(error => window.alert(`Failed to fetch project ID.`));
+
+        }
+
+        function fetchProjectName(id) {
+            return fetch(`/projects/getByID/<${id}>`)
+                .then(response => response.json())
+                .then(data => setProjLog2(data))
                 .catch(error => window.alert(`Failed to fetch project ID.`));
 
         }
@@ -248,6 +259,7 @@ function AwesomeApp(){
                 fetchCreateProject();
                 fetchShowProjects();
                 fetchProjectID(projectName)
+                setCreatedProject(true);
             }
 
             setProjectName('');
@@ -260,6 +272,8 @@ function AwesomeApp(){
             else {
                 fetchJoin();
                 fetchShowProjects();
+                fetchProjectName(id);
+                setLeftProj(false);
             }
             setJoinClicked(false);
             setId('');
@@ -269,6 +283,7 @@ function AwesomeApp(){
             else {
                 fetchLeave();
                 fetchShowProjects();
+                setLeftProj(true);
             }
             setLeaveProject(false);
             setId('');
@@ -302,7 +317,7 @@ function AwesomeApp(){
         }
 
 
-    },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, hwprojID, checkin, checkout]);
+    },[login, logout, createAccount, loginStatus, createProject, createdProject, joinClicked, leaveProject, leftProj, hwprojID, checkin, checkout]);
 
     return (
         <div className={"App"}>
@@ -340,22 +355,29 @@ function AwesomeApp(){
                             <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
                             <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
 
-                            <div>
-                                {Object.keys(projLog).map((key) => (
-                                    <div className={"projBlock"}>
-                                        <div>
-                                            <div className={"projList"}>
-                                                {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
-                                                <strong>Created Project ID is:</strong> {key}
-                                            </div>
-                                            <div className={"projList"}>
-                                                {/*<strong>Description: </strong> {projLog[key][1]}*/}
-                                                {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                            { createdProject ? (
+                                <div>
+                                    {Object.keys(projLog).map((key) => (
+                                        <div className={"projBlock"}>
+                                            <div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
+                                                    <strong>Project Name is:</strong> {projLog[key][0]}
+                                                    <strong>Project ID is:</strong> {key}
+                                                    <strong>Project Description is:</strong> {projLog[key][1]}
+                                                </div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Description: </strong> {projLog[key][1]}*/}
+                                                    {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+
+                            ):(
+                                <div></div>
+                            )}
 
                         </div>
                     </div>
@@ -370,8 +392,36 @@ function AwesomeApp(){
                                 <span><Button variant="contained" size={'small'} onClick={() => setJoinClicked(true)}>Join</Button></span>
                                 <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
                             </span>
+
+                            { leftProj ? (
+                                <div>You have left the project</div>
+
+                            ):(
+                                <div className={"doc"}>
+                                    {Object.keys(projLog2).map((key) => (
+                                        <div className={"projBlock"}>
+                                            <div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
+                                                    <strong>Project Name is:</strong> {projLog2[key][0]}
+                                                    <strong>Project ID is:</strong> {key}
+                                                    <strong>Project Description is:</strong> {projLog2[key][1]}
+                                                </div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Description: </strong> {projLog[key][1]}*/}
+                                                    {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                            )}
+
+
                          </div>
                     </div>
+
 
                     {/*Hardware Management Section*/}
                     <div className={"collection"}>

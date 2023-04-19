@@ -208,7 +208,7 @@ def projects_getByID(projectID):
 
     # ----------- TESTED ----------
     Projects_dict = {}
-    Projects_dict[0] = ['newProj', 'projDescription', 15]
+    Projects_dict[1] = ['Cherry', 'Tree', 15]
     return jsonify(Projects_dict)
     # -------- END TESTED ----------
 
@@ -268,7 +268,7 @@ def projects_getByName(projectName):
 
     # ----------- TESTED ----------
     Projects_dict = {}
-    Projects_dict[0] = ['newProj', 'projDescription', 15]
+    Projects_dict[2] = ['Juniper', 'Berry', 15]
     return jsonify(Projects_dict)
     # -------- END TESTED ----------
 
