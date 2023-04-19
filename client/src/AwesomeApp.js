@@ -305,7 +305,30 @@ function AwesomeApp(){
         // }
         if(checkin){
             setCheckin(false);
-
+            if(hwprojID === '' || qty === ''){
+                window.alert('Please input Hardware ID and Hardware Amount')
+            }
+            else{
+                //     if(qty > avail1){
+                //         fetch(`HWSets/checkOut/${id}/HWSet2/${avail1}`).then(
+                //             response => response.json()
+                //         ).then(
+                //             data => setCheckoutMessage(data)
+                //         ).catch(
+                //             error => console.log(error),
+                //             window.alert(`Checking out of HWSet1 failed. Please try again.`)
+                //         )
+                //     }
+                //     if(checkoutMessage === 'Fail'){
+                //         window.alert(`Checking out of HWSet1 failed. Please try again.`)
+                //     }
+                //     else{
+                //         window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
+                //         setQty1(0)
+                //         setAvail1(0) 
+                //     }
+                // ))}
+            }
             // const newAmt = avail1 - qty1;
 
             // if(qty1 > avail1){
