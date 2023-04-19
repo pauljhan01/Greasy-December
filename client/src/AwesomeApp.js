@@ -88,7 +88,7 @@ function AwesomeApp(){
             return fetch(`/login/<${username}>/<${password}>`)
                 .then(response => response.json())
                 .then(data => {
-                    if( data == 'Fail'){
+                    if( data === 'Fail'){
                         window.alert('Your username or password is incorrect. Please try again.');
                     } else {
                         setLoginMessage(data);
@@ -103,7 +103,7 @@ function AwesomeApp(){
             return fetch(`/Users_db/createUser/<${username}>/<${password}>`)
                 .then(response => response.json())
                 .then(data => {
-                    if ( data == 'Fail'){
+                    if ( data === 'Fail'){
                         window.alert('Failed to create an account. Please try again.');
                     } else {
                         setLoginMessage(data);
@@ -121,7 +121,7 @@ function AwesomeApp(){
             return fetch(`projects/createProject/<${projectName}>/<${projectDescription}>`)
                 .then(response => response.json())
                 .then(data => {
-                    if ( data == 'Fail'){
+                    if ( data === 'Fail'){
                         window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`);
                     } else {
                         setCreateProjectMessage(data);
@@ -136,7 +136,7 @@ function AwesomeApp(){
             return fetch(`/projects/joinByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => {
-                    if ( data == 'Fail'){
+                    if ( data === 'Fail'){
                         window.alert(`Failed to join Project ${id}. Please try again.`);
                     } else {
                         setJoinMessage(data);
@@ -151,7 +151,7 @@ function AwesomeApp(){
             return fetch(`/projects/leaveByID/<${id}>/<${username}>`)
                 .then(response => response.json())
                 .then(data => {
-                    if(data == 'Fail') {
+                    if(data === 'Fail') {
                         window.alert(`You failed to leave project ${id}, please try again.`);
                     } else {
                         setLeaveMessage(data);
@@ -176,7 +176,7 @@ function AwesomeApp(){
                 .then(response => response.json())
                 .then(data => {
                     setGetProjects(data)
-                    if( data == 'Fail' ) { window.alert("Check Out Failed. Please try again.")}
+                    if( data === 'Fail' ) { window.alert("Check Out Failed. Please try again.")}
                     else window.alert(`You have checked out ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}.`)
                 })
                 .catch(error => window.alert("System: Check Out Failed. Please try again."))
@@ -188,7 +188,7 @@ function AwesomeApp(){
                 .then(response => response.json())
                 .then(data => {
                     setGetProjects(data)
-                    if( data == 'Fail' ) { window.alert("Check In Failed. Please try again.")}
+                    if( data === 'Fail' ) { window.alert("Check In Failed. Please try again.")}
                     else window.alert(`You have checked in ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}`)
                 })
                 .catch(error => window.alert("System: Check In Failed. Please try again."))
@@ -205,7 +205,7 @@ function AwesomeApp(){
 
         // *** CONDITIONALS ***
         if(login) {
-            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            if(username === '' || password === '') window.alert("Please enter a user name and password.")
             else {
                 fetchLogin();
                 fetchHWSets();
@@ -220,11 +220,10 @@ function AwesomeApp(){
             setPassword('');
         }
         if(createAccount) {
-            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            if(username === '' || password === '') window.alert("Please enter a user name and password.")
             else {
                 fetchCreateAccount();
             }
-
             setUsername('');
             setPassword('');
             setCreateAccount(false);
@@ -233,7 +232,7 @@ function AwesomeApp(){
             fetchShowProjects();
         }
         if(createProject){
-            if(projectName == '' || projectDescription == '') window.alert("Please enter a project name and description.")
+            if(projectName === '' || projectDescription === '') window.alert("Please enter a project name and description.")
             else {
                 fetchCreateProject();
                 fetchShowProjects();
@@ -245,7 +244,7 @@ function AwesomeApp(){
 
         }
         if(joinClicked){
-            if(id == '') window.alert("Please enter a Project Id.")
+            if(id === '') window.alert("Please enter a Project Id.")
             else {
                 fetchJoin();
                 fetchShowProjects();
@@ -254,7 +253,7 @@ function AwesomeApp(){
             setId('');
         }
         if(leaveProject){
-            if (id == '') window.alert(("Please enter a Project Id."))
+            if (id === '') window.alert(("Please enter a Project Id."))
             else {
                 fetchLeave();
                 fetchShowProjects();
