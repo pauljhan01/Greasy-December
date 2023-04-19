@@ -437,7 +437,7 @@ function AwesomeApp(){
                             <div className={"doc"}>
                                 {Object.keys(hwData).map((key) => (
                                     <div>
-                                        <strong>Hardware set {key}:</strong> Capacity {hwData[key][0]} / Availability {hwData[key][1]}
+                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][1]} / Capacity {hwData[key][0]}
                                     </div>
                                 ))}
                             </div>
