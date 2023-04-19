@@ -22,29 +22,31 @@ def index():
 def createUser(userName, password):
 
     # ----------- TESTED ----------
-    return jsonify('Success')
+    # return jsonify('Success')
     # return jsonify('Fail')
     # --------- END TESTED --------
 
-    # client = pymongo.MongoClient(clientString)
-    # Users_db = client["Users_db"]
-    # Users_collection = Users_db.get_collection("Users_collection");
-    #
-    # Users_Document = Users_collection.find_one({"userID": str(userName)})
-    # #user already exists
-    # if Users_Document != None:
-    #     client.close()
-    #     return jsonify('Fail')
-    #
-    # encryptedUserName = hashlib.sha256(userName.encode())
-    # encryptedPassword = hashlib.sha256(password.encode())
-    # Users_collection.insert_one({
-    #     "userID": encryptedUserName.hexdigest(),
-    #     "userPassword": encryptedPassword.hexdigest(),
-    # })
-    #
-    # client.close()
-    # return jsonify('Success')
+    client = pymongo.MongoClient(clientString)
+    Users_db = client["Users_db"]
+    Users_collection = Users_db.get_collection("Users_collection");
+
+    encryptedUserName = hashlib.sha256(userName.encode())
+    encryptedPassword = hashlib.sha256(password.encode())
+
+    Users_Document = Users_collection.find_one({"userID": str(encryptedUserName.hexdigest())})
+    #user already exists
+    if Users_Document != None:
+        client.close()
+        return jsonify('Fail')
+
+    Users_collection.insert_one({
+        "userID": encryptedUserName.hexdigest(),
+        "userPassword": encryptedPassword.hexdigest(),
+    })
+
+    client.close()
+    return jsonify('Success')
+
 
 #login(fields): Validate User login in Users_db
 #   Inputs: <userName> -> string for user name
