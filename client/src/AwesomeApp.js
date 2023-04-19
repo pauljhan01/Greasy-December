@@ -56,33 +56,33 @@ function AwesomeApp(){
     const [collection, setCollection] = useState([]);
     const [id, setId] = useState('');
 
+    const [projLog, setProjLog] = useState([]);
+    const [projLog2, setProjLog2] = useState([]);
+
         //create project variables
         const [projectName, setProjectName] = useState('');
         const [projectDescription, setProjectDescription] = useState('');
         const [createProject, setCreateProject] = useState(false);
+        const [createdProject, setCreatedProject] = useState(false);
 
         // join project variables
         const [joinClicked, setJoinClicked] = useState(false);
 
         // leave project variables
         const [leaveProject, setLeaveProject] = useState(false);
+        const [leftProj, setLeftProj] = useState(false);
 
         //Project Doc variables
         const [joined, setJoined] = useState(true);
-        const [qty1, setQty1] = useState(0);
-        const [qty2, setQty2] = useState(0);
+        const [qty, setQty] = useState('');
 
-        //Hardware set 1 variables
-        const [avail1, setAvail1] = useState(200);
-        const [cap1, setCap1] = useState(200);
-        const [checkin1, setCheckin1] = useState(false);
-        const [checkout1, setCheckout1] = useState(false);
+        //Hardware management section
+        const [hwprojID, setHWprojID] = useState('');
+        const [hwData, setHWData] = useState([]);
+        const [hwSetID, setHWSetID] = useState('');
+        const [checkin, setCheckin] = useState(false);
+        const [checkout, setCheckout] = useState(false);
 
-        //Hardware set 2 variables
-        const [avail2, setAvail2] = useState(200);
-        const [cap2, setCap2] = useState(200);
-        const [checkin2, setCheckin2] = useState(false);
-        const [checkout2, setCheckout2] = useState(false);
 
     useEffect(() => {
 
@@ -136,6 +136,22 @@ function AwesomeApp(){
                 .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
 
+        function fetchProjectID(name) {
+            return fetch(`/projects/getByName/<${name}>`)
+                .then(response => response.json())
+                .then(data => setProjLog(data))
+                .catch(error => window.alert(`Failed to fetch project ID.`));
+
+        }
+
+        function fetchProjectName(id) {
+            return fetch(`/projects/getByID/<${id}>`)
+                .then(response => response.json())
+                .then(data => setProjLog2(data))
+                .catch(error => window.alert(`Failed to fetch project ID.`));
+
+        }
+
         //join project hook
         function fetchJoin() {
             return fetch(`/projects/joinByID/<${id}>/<${username}>`)
@@ -157,7 +173,7 @@ function AwesomeApp(){
                 .then(response => response.json())
                 .then(data => {
                     if(data == 'Fail') {
-                        window.alert(`Leave project failed, please try again.`);
+                        window.alert(`You failed to leave project ${id}, please try again.`);
                     } else {
                         setLeaveMessage(data);
                         window.alert(`You have left Project: ${id}`);
@@ -177,30 +193,44 @@ function AwesomeApp(){
 
         //Check Out Hardware
         function fetchCheckOut(hwsetID, amount){
-            return fetch(`/HWSets/checkOut/${hwsetID}/${id}/${amount}`)
+            return fetch(`/HWSets/checkOutV2/${hwsetID}/${hwprojID}/${amount}/${username}`)
                 .then(response => response.json())
                 .then(data => {
                     setGetProjects(data)
-                    if( data == 'Fail' ) { window.alert("System: Check Out Failed. Please try again.")}
+                    if( data == 'Fail' ) { window.alert("Check Out Failed. Please try again.")}
+                    else window.alert(`You have checked out ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}.`)
                 })
                 .catch(error => window.alert("System: Check Out Failed. Please try again."))
         }
 
         //Check In Hardware
         function fetchCheckIn(hwsetID, amount){
-            return fetch(`/HWSets/checkIn/${hwsetID}/${id}/${amount}`)
+            return fetch(`/HWSets/checkInV2/${hwsetID}/${hwprojID}/${amount}/${username}`)
                 .then(response => response.json())
                 .then(data => {
                     setGetProjects(data)
-                    if( data == 'Fail' ) { window.alert("System: Check In Failed. Please try again.")}
+                    if( data == 'Fail' ) { window.alert("Check In Failed. Please try again.")}
+                    else window.alert(`You have checked in ${amount} units to Hardware Set ${hwsetID} for Project ${hwprojID}`)
                 })
                 .catch(error => window.alert("System: Check In Failed. Please try again."))
         }
 
+        function fetchHWSets(){
+            return fetch(`/HWSets`)
+                .then(response => response.json())
+                .then(data => {
+                    setHWData(data)
+                })
+                .catch(error => window.alert("System: Failed to retrieve hardware set data."))
+        }
 
         // *** CONDITIONALS ***
         if(login) {
-            fetchLogin();
+            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            else {
+                fetchLogin();
+                fetchHWSets();
+            }
             setLogin(false) ;
         }
         if(logout){
@@ -208,130 +238,86 @@ function AwesomeApp(){
             setLoginLabel('Log In');
             setLoginStatus(false);
             setUsername('');
+            setPassword('');
         }
         if(createAccount) {
-            fetchCreateAccount();
+            if(username == '' || password == '') window.alert("Please enter a user name and password.")
+            else {
+                fetchCreateAccount();
+            }
+
+            setUsername('');
+            setPassword('');
             setCreateAccount(false);
         }
         if(loginStatus) {
             fetchShowProjects();
         }
         if(createProject){
-            fetchCreateProject();
+            if(projectName == '' || projectDescription == '') window.alert("Please enter a project name and description.")
+            else {
+                fetchCreateProject();
+                fetchShowProjects();
+                fetchProjectID(projectName)
+                setCreatedProject(true);
+            }
+
             setProjectName('');
             setProjectDescription('');
             setCreateProject(false)
-            fetchShowProjects();
+
         }
         if(joinClicked){
-            fetchJoin();
+            if(id == '') window.alert("Please enter a Project Id.")
+            else {
+                fetchJoin();
+                fetchShowProjects();
+                fetchProjectName(id);
+                setLeftProj(false);
+            }
             setJoinClicked(false);
             setId('');
-            fetchShowProjects();
         }
         if(leaveProject){
-            fetchLeave();
+            if (id == '') window.alert(("Please enter a Project Id."))
+            else {
+                fetchLeave();
+                fetchShowProjects();
+                setLeftProj(true);
+            }
             setLeaveProject(false);
             setId('');
-            fetchShowProjects();
         }
-        if(checkin1){
-            setCheckin1(false);
+        if(checkin){
+            setCheckin(false);
 
-            const newAmt = avail1 + qty1;
+            if(hwprojID == '') window.alert("Please enter a Project ID.");
+            else if (hwSetID == '') window.alert("Please enter a Hardware Set ID.");
+            else if (qty == '') window.alert("Please enter a quantity.");
+            else fetchCheckIn(hwSetID, qty);
 
-            if(newAmt > cap1){
-                fetchCheckIn(1, avail1);
-                if (checkinMessage == 'Fail' ) {}
-                else {
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`);
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
-            else {
-                fetchCheckIn(1, qty1);
-                if ( checkinMessage == 'Fail' ) {}
-                else {
-                    window.alert(`You have checked in ${qty1} units into HWSet1`)
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
+            fetchHWSets();
+            setHWSetID('');
+            setQty('');
+            setHWprojID('');
         }
-        if(checkout1){
-            setCheckout1(false);
-            const newAmt = avail1 - qty1;
+        if(checkout){
+            setCheckout(false);
 
-            if(qty1 > avail1){
-                fetchCheckOut(1, avail1);
-                if(checkoutMessage == 'Fail') {}
-                else {
-                    window.alert(`You attempted to check out too many units! ${avail1} units from HWSet1 were checked out`);
-                    setQty1(0);
-                    setAvail1(0);
-                }
-            }
-            else {
-                fetchCheckOut(1, qty1);
-                if(checkoutMessage == 'Fail'){}
-                else{
-                    window.alert(`You have checked out ${qty1} units from HWSet1`)
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
-        }
-        if(checkin2){
-            setCheckin2(false);
+            if(hwprojID == '') window.alert("Please enter a Project ID.");
+            else if (hwSetID == '') window.alert("Please enter a Hardware Set ID.");
+            else if (qty == '') window.alert("Please enter a quantity.");
+            else fetchCheckOut(hwSetID,qty);
 
-            const newAmt = avail2 + qty2;
+            fetchHWSets();
+            setHWSetID('');
+            setQty('');
+            setHWprojID('');
 
-            if(newAmt > cap2){
-                fetchCheckIn(2, avail2);
-                if (checkinMessage == 'Fail' ) {}
-                else {
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet1 were not checked in`);
-                    setQty2(0)
-                    setAvail2(newAmt)
-                }
-            }
-            else {
-                fetchCheckIn(2, qty2);
-                if ( checkinMessage == 'Fail' ) {}
-                else {
-                    window.alert(`You have checked in ${qty2} units into HWSet1`)
-                    setQty2(0)
-                    setAvail2(newAmt)
-                }
-            }
-        }
-        if(checkout2){
-            setCheckout2(false);
-
-            const newAmt = avail2 - qty2;
-
-            if(qty2 > avail2){
-                fetchCheckOut(2, avail2);
-                if(checkoutMessage == 'Fail'){}
-                else {
-                    window.alert(`You are attempting to check out too many units! ${avail2} units from HWSet2 were checked out`);
-                    setQty2(0);
-                    setAvail2(0);
-                }
-            }
-            else {
-                fetchCheckOut(2, avail2)
-                if(checkoutMessage == 'Fail'){}
-                else {
-                    window.alert(`You have checked out ${qty2} units from HWSet2.`);
-                    setQty2(0);
-                    setAvail2(newAmt);
-                }
-            }
         }
 
-    },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, checkin1, checkin2, checkout1, checkout2]);
+
+    },[login, logout, createAccount, loginStatus, createProject, createdProject, joinClicked, leaveProject, leftProj, hwprojID, checkin, checkout]);
 
     return (
         <div className={"App"}>
@@ -349,7 +335,7 @@ function AwesomeApp(){
                 ):(
                     <div className={"login"}>
                         <span><TextField value={username} onChange={(e) => setUsername(e.target.value)} id="outlined-basic" label="Enter Username" variant="outlined" size={'small'} /></span>
-                        <span><TextField id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
+                        <span><TextField value={password} onChange={ (e) => setPassword(e.target.value)} id="outlined-basic" label="Enter Password" variant="outlined" size={'small'} /></span>
                         <span><Button onClick={() => setLogin(true)} variant="contained" size={'small'}>Log In</Button></span>
                         <span>or</span>
                         <span><Button onClick={() => setCreateAccount(true)} variant="contained" size={'small'}>Create Account</Button></span>
@@ -368,12 +354,37 @@ function AwesomeApp(){
                             <span><TextField value={projectName} onChange={(e) => setProjectName(e.target.value)} id="outlined-basic" label="Enter Project Name" variant="outlined" size={'small'} /></span>
                             <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
                             <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
+
+                            { createdProject ? (
+                                <div>
+                                    {Object.keys(projLog).map((key) => (
+                                        <div className={"projBlock"}>
+                                            <div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
+                                                    <strong>Project Name is:</strong> {projLog[key][0]}
+                                                    <strong>Project ID is:</strong> {key}
+                                                    <strong>Project Description is:</strong> {projLog[key][1]}
+                                                </div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Description: </strong> {projLog[key][1]}*/}
+                                                    {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                            ):(
+                                <div></div>
+                            )}
+
                         </div>
                     </div>
 
                     {/*Project Management Section*/}
                     <div className={"collection"}>
-                        <h1>Projects</h1>
+                        <h1>Join or Leave a Project</h1>
                         <div className={"doc"}>
                             <h2>Please Enter the Project ID</h2>
                             <span className={"hardwareSetR"}>
@@ -382,46 +393,88 @@ function AwesomeApp(){
                                 <span><Button onClick={() => setLeaveProject(true)} variant="contained" size={'small'}>Leave</Button></span>
                             </span>
 
-                            <span className={"hardwareSet"}>
-                                <span><strong>HWSet1</strong> </span>
-                                <span><strong>Availability: </strong> {avail1} / {cap1} </span>
-                                <span><TextField value={qty1} onChange={(e)=> setQty1(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                <span><Button onClick={() => setCheckin1(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                <span><Button onClick={() => setCheckout1(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                            </span>
-                             <span className={"hardwareSet"}>
-                                <span><strong>HWSet2</strong> </span>
-                                <span><strong>Availability: </strong> {avail2} / {cap2} </span>
-                                <span><TextField value={qty2} onChange={(e)=> setQty2(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
-                                <span><Button onClick={() => setCheckin2(true)} variant="contained" size={'small'}>Check In</Button></span>
-                                <span><Button onClick={() => setCheckout2(true)} variant="contained" size={'small'}>Check Out</Button></span>
-                            </span>
+                            { leftProj ? (
+                                <div>You have left the project</div>
+
+                            ):(
+                                <div className={"doc"}>
+                                    {Object.keys(projLog2).map((key) => (
+                                        <div className={"projBlock"}>
+                                            <div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
+                                                    <strong>Project Name is:</strong> {projLog2[key][0]}
+                                                    <strong>Project ID is:</strong> {key}
+                                                    <strong>Project Description is:</strong> {projLog2[key][1]}
+                                                </div>
+                                                <div className={"projList"}>
+                                                    {/*<strong>Description: </strong> {projLog[key][1]}*/}
+                                                    {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                            )}
+
+
                          </div>
                     </div>
 
-                    {/*Users Lists of Projects Section*/}
+
+                    {/*Hardware Management Section*/}
                     <div className={"collection"}>
-                        <h1>Your Active Projects</h1>
+                        <h1>Check In/Out Hardware</h1>
                         <div className={"doc"}>
+                            <div>
+                                <h2>Project ID</h2>
+                                <TextField value={hwprojID} onChange={(e)=> setHWprojID(e.target.value)} id="outlined-basic" label="Enter Project ID" variant="outlined" size={'small'} />
+                            </div>
+                        <div>
+                            <h2>Hardware Set Info</h2>
 
-                            {Object.keys(getProjects).map((key) => (
-                                <div className={"projBlock"}>
-                                    <div className={"doc"}>
-                                        <div>
-                                            <h2>Project Name: {getProjects[key][0]}</h2>
-                                            <strong>Project ID:</strong> {key}
-                                        </div>
-                                        <div className={"projList"}>
-                                            <strong>Description: </strong> {getProjects[key][1]}
-                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
-                                        </div>
+                            <div className={"doc"}>
+                                {Object.keys(hwData).map((key) => (
+                                    <div>
+                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][1]} / Capacity {hwData[key][0]}
                                     </div>
-                                </div>
-
-                            ))}
-
+                                ))}
+                            </div>
+                            <div className={"hardwareSet"}>
+                                <TextField value={hwSetID} onChange={(e)=> setHWSetID(e.target.value)} id="outlined-basic" label="Hardware Set ID" variant="outlined" size={'small'} />
+                                <span><TextField value={qty} onChange={(e)=> setQty(parseInt(e.target.value))} id="outlined-basic" label="Enter Amount" variant="outlined" size={'small'} /></span>
+                                <span><Button onClick={() => setCheckin(true)} variant="contained" size={'small'}>Check In</Button></span>
+                                <span><Button onClick={() => setCheckout(true)} variant="contained" size={'small'}>Check Out</Button></span>
+                            </div>
+                        </div>
                         </div>
                     </div>
+
+                    {/*Users Lists of Projects Section*/}
+                    {/*<div className={"collection"}>*/}
+                    {/*    <h1>Project List</h1>*/}
+                    {/*    <div className={"doc"}>*/}
+
+                    {/*        {Object.keys(getProjects).map((key) => (*/}
+                    {/*            <div className={"projBlock"}>*/}
+                    {/*                <div className={"doc"}>*/}
+                    {/*                    <div>*/}
+                    {/*                        <h2>Project Name: {getProjects[key][0]}</h2>*/}
+                    {/*                        <strong>Project ID:</strong> {key}*/}
+                    {/*                    </div>*/}
+                    {/*                    <div className={"projList"}>*/}
+                    {/*                        <strong>Description: </strong> {getProjects[key][1]}*/}
+                    {/*                        /!*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*!/*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </div>*/}
+
+                    {/*        ))}*/}
+
+                    {/*    </div>*/}
+                    {/*</div>*/}
+
 
                 </div>
 
