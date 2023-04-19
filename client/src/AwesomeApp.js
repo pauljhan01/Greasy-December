@@ -259,141 +259,141 @@ function AwesomeApp(){
                 fetchShowProjects();
             }  
         }
-        if(checkin1){
-            setCheckin1(false);
+        // if(checkin1){
+        //     setCheckin1(false);
 
-            const newAmt = avail1 + qty1;
+        //     const newAmt = avail1 + qty1;
 
-            if(newAmt > cap1){
-                fetch(`HWSets/checkIn/${id}/HWSet1/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                   data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet1 failed. Please try again')
-                )
-                //if backend sends us failure, alert user
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`)
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
-            else {
-                fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
-                   response => response.json() 
-                ).then(
-                    data => setCheckinMessage(data)
-                ).
-                catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet1 failed. Please try again.`) 
-                )
-                if(checkinMessage === 'Fail'){
-                    window.alert("Checking into HWSet1 failed. Please try again.")
-                }
-                else{
-                    window.alert(`You have checked in ${qty1} units into HWSet1`)
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
-        }
+        //     if(newAmt > cap1){
+        //         fetch(`HWSets/checkIn/${id}/HWSet1/${avail1}`).then(
+        //             response => response.json()
+        //         ).then(
+        //            data => setCheckinMessage(data)
+        //         ).catch(
+        //             error => console.log(error),
+        //             window.alert('Checking into HWSet1 failed. Please try again')
+        //         )
+        //         //if backend sends us failure, alert user
+        //         if(checkinMessage === 'Fail'){
+        //             window.alert("Checking into HWSet1 failed. Please try again.")
+        //         }
+        //         else{
+        //             window.alert(`You are attempting to check in too many units! ${newAmt - cap1} units from HWSet1 were not checked in`)
+        //             setQty1(0)
+        //             setAvail1(newAmt)
+        //         }
+        //     }
+        //     else {
+        //         fetch(`HWSets/checkIn/${id}/HWSet1/${qty1}`).then(
+        //            response => response.json() 
+        //         ).then(
+        //             data => setCheckinMessage(data)
+        //         ).
+        //         catch(
+        //             error => console.log(error),
+        //             window.alert(`Checking into HWSet1 failed. Please try again.`) 
+        //         )
+        //         if(checkinMessage === 'Fail'){
+        //             window.alert("Checking into HWSet1 failed. Please try again.")
+        //         }
+        //         else{
+        //             window.alert(`You have checked in ${qty1} units into HWSet1`)
+        //             setQty1(0)
+        //             setAvail1(newAmt)
+        //         }
+        //     }
+        // }
         if(checkin){
             setCheckin(false);
 
-            const newAmt = avail1 - qty1;
+            // const newAmt = avail1 - qty1;
 
-            if(qty1 > avail1){
-                fetch(`HWSets/checkOut/${id}/HWSet2/${avail1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert(`Checking out of HWSet1 failed. Please try again.`)
-                }
-                else{
-                    window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
-                    setQty1(0)
-                    setAvail1(0) 
-                }
-            }
-            else {
-                fetch(`HWSets/checkOut/${id}/HWSet1/${qty1}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckoutMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                )
-                if(checkoutMessage === 'Fail'){
-                    window.alert('Checking out from HWSet1 failed. Please try again.')
-                }
-                else{
-                    window.alert(`You have checked out ${qty1} units from HWSet1`)
-                    setQty1(0)
-                    setAvail1(newAmt)
-                }
-            }
+            // if(qty1 > avail1){
+            //     fetch(`HWSets/checkOut/${id}/HWSet2/${avail1}`).then(
+            //         response => response.json()
+            //     ).then(
+            //         data => setCheckoutMessage(data)
+            //     ).catch(
+            //         error => console.log(error),
+            //         window.alert(`Checking out of HWSet1 failed. Please try again.`)
+            //     )
+            //     if(checkoutMessage === 'Fail'){
+            //         window.alert(`Checking out of HWSet1 failed. Please try again.`)
+            //     }
+            //     else{
+            //         window.alert(`You are attempting to check out too many units! ${avail1} units from HWSet1 were checked out`)
+            //         setQty1(0)
+            //         setAvail1(0) 
+            //     }
+            // }
+            // else {
+            //     fetch(`HWSets/checkOut/${id}/HWSet1/${qty1}`).then(
+            //         response => response.json()
+            //     ).then(
+            //         data => setCheckoutMessage(data)
+            //     ).catch(
+            //         error => console.log(error),
+            //         window.alert('Checking out from HWSet1 failed. Please try again.')
+            //     )
+            //     if(checkoutMessage === 'Fail'){
+            //         window.alert('Checking out from HWSet1 failed. Please try again.')
+            //     }
+            //     else{
+            //         window.alert(`You have checked out ${qty1} units from HWSet1`)
+            //         setQty1(0)
+            //         setAvail1(newAmt)
+            //     }
+            // }
         }
         if(checkout){
             setCheckout(false);
 
-            const newAmt = avail2 + qty2;
+            // const newAmt = avail2 + qty2;
 
-            if(newAmt > cap2){
-                fetch(`HWSets/checkIn/${id}/HWSet2/${avail2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)  
-                ).catch(
-                    error => console.log(error),
-                    window.alert('Checking into HWSet2 failed. Please try again.')
-                )
-                if(checkinMessage ===  `Fail`){
-                    window.alert('Checking into HWSet2 failed. Please try again.')
-                }
-                else{
-                    window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`)
-                    setQty2(0)
-                    setAvail2(cap2)
-                }
-            }
-            else {
-                fetch(`HWSets/checkIn/${id}/HWSet2/${qty2}`).then(
-                    response => response.json()
-                ).then(
-                    data => setCheckinMessage(data)
-                ).catch(
-                    error => console.log(error),
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
-                )
-                if(checkinMessage === `Fail`){
-                    window.alert(`Checking into HWSet2 failed. Please try again.`)
-                }
-                else{
-                    window.alert(`You have checked in ${qty2} units from HWSet2.`);
-                    setQty2(0);
-                    setAvail2(newAmt);
-                }
+            // if(newAmt > cap2){
+            //     fetch(`HWSets/checkIn/${id}/HWSet2/${avail2}`).then(
+            //         response => response.json()
+            //     ).then(
+            //         data => setCheckinMessage(data)  
+            //     ).catch(
+            //         error => console.log(error),
+            //         window.alert('Checking into HWSet2 failed. Please try again.')
+            //     )
+            //     if(checkinMessage ===  `Fail`){
+            //         window.alert('Checking into HWSet2 failed. Please try again.')
+            //     }
+            //     else{
+            //         window.alert(`You are attempting to check in too many units! ${newAmt - cap2} units from HWSet2 were not checked in`)
+            //         setQty2(0)
+            //         setAvail2(cap2)
+            //     }
+            // }
+            // else {
+            //     fetch(`HWSets/checkIn/${id}/HWSet2/${qty2}`).then(
+            //         response => response.json()
+            //     ).then(
+            //         data => setCheckinMessage(data)
+            //     ).catch(
+            //         error => console.log(error),
+            //         window.alert(`Checking into HWSet2 failed. Please try again.`)
+            //     )
+            //     if(checkinMessage === `Fail`){
+            //         window.alert(`Checking into HWSet2 failed. Please try again.`)
+            //     }
+            //     else{
+            //         window.alert(`You have checked in ${qty2} units from HWSet2.`);
+            //         setQty2(0);
+            //         setAvail2(newAmt);
+            //     }
                
-            }
+            // }
         }
-        if(checkout2){
-            setCheckout2(false);
+        // if(checkout2){
+        //     setCheckout2(false);
 
-            const newAmt = avail2 - qty2;
+        //     const newAmt = avail2 - qty2;
 
-        }
+        // }
 
 
     },[login, logout, createAccount, loginStatus, createProject, joinClicked, leaveProject, hwprojID, checkin, checkout]);
@@ -463,7 +463,7 @@ function AwesomeApp(){
                             <div className={"doc"}>
                                 {Object.keys(hwData).map((key) => (
                                     <div>
-                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][0]} / Capacity {hwData[key][1]}
+                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][1]} / Capacity {hwData[key][0]}
                                     </div>
                                 ))}
                             </div>
@@ -491,7 +491,7 @@ function AwesomeApp(){
                                         </div>
                                         <div className={"projList"}>
                                             <strong>Description: </strong> {getProjects[key][1]}
-                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
+                                            {/* <strong>Hardware Checked Out: </strong> {getProjects[key][2]} */}
                                         </div>
                                     </div>
                                 </div>
