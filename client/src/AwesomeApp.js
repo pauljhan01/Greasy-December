@@ -131,6 +131,14 @@ function AwesomeApp(){
                 .catch(error => window.alert(`Failed to create ${projectName}. The project either already exists or there are max number of projects.`));
         }
 
+        function fetchProjectID(name) {
+            return fetch(`/projects/getByName/<${name}>`)
+                .then(response => response.json())
+                .then(data => setProjLog(data))
+                .catch(error => window.alert(`Failed to fetch project ID.`));
+
+        }
+
         //join project hook
         function fetchJoin() {
             return fetch(`/projects/joinByID/<${id}>/<${username}>`)
@@ -237,6 +245,7 @@ function AwesomeApp(){
             else {
                 fetchCreateProject();
                 fetchShowProjects();
+                fetchProjectID(projectName)
             }
 
             setProjectName('');
@@ -392,28 +401,29 @@ function AwesomeApp(){
                     </div>
 
                     {/*Users Lists of Projects Section*/}
-                    <div className={"collection"}>
-                        <h1>Project List</h1>
-                        <div className={"doc"}>
+                    {/*<div className={"collection"}>*/}
+                    {/*    <h1>Project List</h1>*/}
+                    {/*    <div className={"doc"}>*/}
 
-                            {Object.keys(getProjects).map((key) => (
-                                <div className={"projBlock"}>
-                                    <div className={"doc"}>
-                                        <div>
-                                            <h2>Project Name: {getProjects[key][0]}</h2>
-                                            <strong>Project ID:</strong> {key}
-                                        </div>
-                                        <div className={"projList"}>
-                                            <strong>Description: </strong> {getProjects[key][1]}
-                                            <strong>Hardware Checked Out: </strong> {getProjects[key][2]}
-                                        </div>
-                                    </div>
-                                </div>
+                    {/*        {Object.keys(getProjects).map((key) => (*/}
+                    {/*            <div className={"projBlock"}>*/}
+                    {/*                <div className={"doc"}>*/}
+                    {/*                    <div>*/}
+                    {/*                        <h2>Project Name: {getProjects[key][0]}</h2>*/}
+                    {/*                        <strong>Project ID:</strong> {key}*/}
+                    {/*                    </div>*/}
+                    {/*                    <div className={"projList"}>*/}
+                    {/*                        <strong>Description: </strong> {getProjects[key][1]}*/}
+                    {/*                        /!*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*!/*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </div>*/}
 
-                            ))}
+                    {/*        ))}*/}
 
-                        </div>
-                    </div>
+                    {/*    </div>*/}
+                    {/*</div>*/}
+
 
                 </div>
 
