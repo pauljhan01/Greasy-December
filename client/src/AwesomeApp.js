@@ -328,6 +328,25 @@ function AwesomeApp(){
                             <span><TextField value={projectName} onChange={(e) => setProjectName(e.target.value)} id="outlined-basic" label="Enter Project Name" variant="outlined" size={'small'} /></span>
                             <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
                             <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
+
+
+                            <div>
+                                {Object.keys(projLog).map((key) => (
+                                    <div className={"projBlock"}>
+                                        <div>
+                                            <div className={"projList"}>
+                                                {/*<strong>Project Name:</strong> {projLog[key][0]}*/}
+                                                <strong>Created Project ID is:</strong> {key}
+                                            </div>
+                                            <div className={"projList"}>
+                                                {/*<strong>Description: </strong> {projLog[key][1]}*/}
+                                                {/*<strong>Hardware Checked Out: </strong> {getProjects[key][2]}*/}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
                         </div>
                     </div>
 
