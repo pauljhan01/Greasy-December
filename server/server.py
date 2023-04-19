@@ -205,25 +205,32 @@ def createProjectWithID(projectName, projectDescription, projectID):
 #           String: "Fail" if no HWSet is found
 @app.route('/projects/getByID/<projectID>')
 def projects_getByID(projectID):
-    client = pymongo.MongoClient(clientString)
 
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"ID": projectID})
+    # ----------- TESTED ----------
+    Projects_dict = {}
+    Projects_dict[0] = ['newProj', 'projDescription', 15]
+    return jsonify(Projects_dict)
+    # -------- END TESTED ----------
 
-    if Projects_Document == None:
-        client.close()
-        return jsonify('Fail')
-
-    Project_dict = {}
-    temp_ID = Projects_Document.get('ID')
-    temp_Name = Projects_Document.get('Name')
-    temp_Description = Projects_Document.get('Description')
-    temp_CheckedOut = Projects_Document.get('CheckedOut')
-    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
-
-    client.close()
-    return Project_dict
+    # client = pymongo.MongoClient(clientString)
+    #
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # Projects_Document = Projects_collection.find_one({"ID": projectID})
+    #
+    # if Projects_Document == None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # Project_dict = {}
+    # temp_ID = Projects_Document.get('ID')
+    # temp_Name = Projects_Document.get('Name')
+    # temp_Description = Projects_Document.get('Description')
+    # temp_CheckedOut = Projects_Document.get('CheckedOut')
+    # Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
+    #
+    # client.close()
+    # return Project_dict
 
 #projects_getByIDV2(projectID): Get one project by ID
 #   Inputs: <projectName> -> String: name of project
@@ -258,25 +265,32 @@ def projects_getByIDV2(projectID):
 #           String: "Fail" if no HWSet is found
 @app.route('/projects/getByName/<projectName>')
 def projects_getByName(projectName):
-    client = pymongo.MongoClient(clientString)
 
-    Projects_db = client["Projects_db"]
-    Projects_collection = Projects_db.get_collection("Projects_collection")
-    Projects_Document = Projects_collection.find_one({"Name": projectName})
+    # ----------- TESTED ----------
+    Projects_dict = {}
+    Projects_dict[0] = ['newProj', 'projDescription', 15]
+    return jsonify(Projects_dict)
+    # -------- END TESTED ----------
 
-    if Projects_Document == None:
-        client.close()
-        return jsonify('Fail')
-
-    Project_dict = {}
-    temp_ID = Projects_Document.get('ID')
-    temp_Name = Projects_Document.get('Name')
-    temp_Description = Projects_Document.get('Description')
-    temp_CheckedOut = Projects_Document.get('CheckedOut')
-    Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
-
-    client.close()
-    return Project_dict
+    # client = pymongo.MongoClient(clientString)
+    #
+    # Projects_db = client["Projects_db"]
+    # Projects_collection = Projects_db.get_collection("Projects_collection")
+    # Projects_Document = Projects_collection.find_one({"Name": projectName})
+    #
+    # if Projects_Document == None:
+    #     client.close()
+    #     return jsonify('Fail')
+    #
+    # Project_dict = {}
+    # temp_ID = Projects_Document.get('ID')
+    # temp_Name = Projects_Document.get('Name')
+    # temp_Description = Projects_Document.get('Description')
+    # temp_CheckedOut = Projects_Document.get('CheckedOut')
+    # Project_dict[temp_ID] = [temp_Name, temp_Description, temp_CheckedOut]
+    #
+    # client.close()
+    # return Project_dict
 
 
 #projects_joinByID(projectID, userName): Get one project by ID
@@ -658,7 +672,7 @@ def HWSets():
 
     # ----------- TESTED ----------
     hw_dict = {}
-    hw_dict['1'] = ['200', '300']
+    hw_dict['1'] = ['500', '300']
     hw_dict['2'] = ['400', '200']
     hw_dict['3'] = ['400', '200']
     return jsonify(hw_dict)

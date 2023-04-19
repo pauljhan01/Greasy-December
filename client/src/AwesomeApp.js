@@ -56,6 +56,8 @@ function AwesomeApp(){
     const [collection, setCollection] = useState([]);
     const [id, setId] = useState('');
 
+    const [projLog, setProjLog] = useState([]);
+
         //create project variables
         const [projectName, setProjectName] = useState('');
         const [projectDescription, setProjectDescription] = useState('');
@@ -338,7 +340,6 @@ function AwesomeApp(){
                             <span><TextField value={projectDescription} onChange={(e) => setProjectDescription(e.target.value)} id="outlined-basic" label="Enter Description" variant="outlined" size={'small'} /></span>
                             <span><Button variant="contained" size={'small'} onClick={() => setCreateProject(true)}>Create</Button></span>
 
-
                             <div>
                                 {Object.keys(projLog).map((key) => (
                                     <div className={"projBlock"}>
@@ -386,7 +387,7 @@ function AwesomeApp(){
                             <div className={"doc"}>
                                 {Object.keys(hwData).map((key) => (
                                     <div>
-                                        <strong>Hardware set {key}:</strong> Availability {hwData[key][0]} / Capacity {hwData[key][1]}
+                                        <strong>Hardware set {key}:</strong> Capacity {hwData[key][0]} / Availability {hwData[key][1]}
                                     </div>
                                 ))}
                             </div>
